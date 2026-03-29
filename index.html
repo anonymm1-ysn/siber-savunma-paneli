@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHOST-SHIELD V5 | SİBER PANEL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="welcome-screen">
+        <h1 class="glitch">SYSTEM: LOCKED</h1>
+        <p style="color: #0f0; margin-bottom: 25px; letter-spacing: 2px;">[ YETKİSİZ ERİŞİM ENGELLENDİ ]</p>
+        <button onclick="enterSystem()" class="enter-btn">SİSTEME GİRİŞ YAP</button>
+    </div>
+
+    <div id="main-app" style="display: none;">
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'security')">🔐 GÜVENLİK</button>
+            <button class="tab-link" onclick="openTab(event, 'defend')">🛡️ BOT SAVUNMA</button>
+        </div>
+
+        <div id="security" class="tab-content show">
+            <h3>Şifre Analiz Motoru (Java)</h3>
+            <input type="password" id="passIn" placeholder="Analiz edilecek şifre...">
+            <div id="status" style="margin-top: 10px;">Sistem analiz için hazır.</div>
+        </div>
+
+        <div id="defend" class="tab-content">
+            <h3>Bot Savunma Protokolü</h3>
+            <p>Durum: <span style="color: #0f0;">AKTİF</span></p>
+            <p style="font-size: 12px; color: #888;">"Görünmez, izlenemez, yakalanamaz."</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
