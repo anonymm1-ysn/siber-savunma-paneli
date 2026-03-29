@@ -1,13 +1,23 @@
-body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-#welcome-screen { text-align: center; border: 2px solid #0f0; padding: 40px; box-shadow: 0 0 20px #0f0; background: rgba(0, 20, 0, 0.9); }
-.glitch { font-size: 32px; text-shadow: 2px 2px #f00; font-weight: bold; margin-bottom: 10px; }
-.enter-btn { background: #0f0; color: #000; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; letter-spacing: 1px; transition: 0.3s; }
-.enter-btn:hover { box-shadow: 0 0 15px #0f0; transform: scale(1.1); }
+body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
+#welcome-screen { text-align: center; border: 3px solid #0f0; padding: 50px; box-shadow: 0 0 30px #0f0; background: rgba(0, 15, 0, 0.95); z-index: 10; position: relative; }
+.glitch { font-size: 45px; font-weight: bold; color: #0f0; position: relative; text-shadow: 0.05em 0 0 #f00, -0.05em -0.025em 0 #0ff, 0.025em 0.05em 0 #ff0; animation: glitch 1s infinite; }
+@keyframes glitch { 0% { text-shadow: 0.05em 0 0 #f00, -0.05em -0.025em 0 #0ff, 0.025em 0.05em 0 #ff0; } 14% { text-shadow: 0.05em 0 0 #f00, -0.05em -0.025em 0 #0ff, 0.025em 0.05em 0 #ff0; } 15% { text-shadow: -0.05em -0.025em 0 #f00, 0.025em 0.025em 0 #0ff, -0.05em -0.05em 0 #ff0; } 100% { text-shadow: -0.025em 0 0 #f00, -0.025em -0.025em 0 #0ff, -0.025em -0.05em 0 #ff0; } }
+.warning { color: #f00; font-weight: bold; margin: 20px 0; border: 1px dashed #f00; padding: 10px; }
+.enter-btn { background: transparent; border: 2px solid #0f0; color: #0f0; padding: 15px 40px; font-size: 18px; cursor: pointer; transition: 0.4s; font-weight: bold; }
+.enter-btn:hover { background: #0f0; color: #000; box-shadow: 0 0 30px #0f0; }
 
-/* SEKME AYARLARI */
-.tabs { display: flex; border-bottom: 1px solid #0f0; margin-bottom: 15px; }
-.tab-link { background: none; border: none; color: #0f0; padding: 12px; cursor: pointer; opacity: 0.5; font-weight: bold; }
-.tab-link.active { opacity: 1; border-bottom: 3px solid #0f0; }
-.tab-content { display: none; padding: 25px; border: 1px solid #0f0; background: #050505; width: 380px; box-shadow: 0 0 10px #0f0; }
+header { position: absolute; top: 10px; left: 10px; font-size: 12px; display: flex; gap: 20px; }
+.status-node { border: 1px solid #0f0; padding: 4px 8px; }
+#main-app { width: 90%; max-width: 800px; background: #050505; border: 1px solid #0f0; padding: 20px; box-shadow: 0 0 20px #040; display: none; }
+.tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #0f0; }
+.tab-link { background: #111; border: 1px solid #0f0; color: #0f0; padding: 10px 15px; cursor: pointer; }
+.tab-link.active { background: #0f0; color: #000; }
+.tab-content { display: none; height: 300px; overflow-y: auto; background: #000; padding: 15px; border: 1px solid #044; }
 .tab-content.show { display: block; }
-input { background: #000; border: 1px solid #0f0; color: #0f0; padding: 12px; width: 90%; margin-top: 15px; outline: none; }
+
+#log-box { font-size: 14px; line-height: 1.6; }
+.blink { animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.scan-bar { width: 100%; height: 10px; border: 1px solid #0f0; margin: 20px 0; }
+.scan-progress { width: 0%; height: 100%; background: #0f0; animation: scan 5s infinite; }
+@keyframes scan { 0% { width: 0; } 100% { width: 100%; } }

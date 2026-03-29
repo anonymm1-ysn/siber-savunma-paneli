@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GHOST-SHIELD V5 | SİBER PANEL</title>
+    <title>GHOST-SHIELD v5.0 | ALPHA ACCESS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="welcome-screen">
-        <h1 class="glitch">SYSTEM: LOCKED</h1>
-        <p style="color: #0f0; margin-bottom: 25px; letter-spacing: 2px;">[ YETKİSİZ ERİŞİM ENGELLENDİ ]</p>
-        <button onclick="enterSystem()" class="enter-btn">SİSTEME GİRİŞ YAP</button>
+        <div class="matrix-bg"></div>
+        <h1 class="glitch" data-text="SYSTEM: LOCKED">SYSTEM: LOCKED</h1>
+        <p class="warning">[ KRİTİK GÜVENLİK İHLALİ TESPİT EDİLDİ ]</p>
+        <button onclick="enterSystem()" class="enter-btn">PROTOKOLÜ BAŞLAT</button>
     </div>
 
     <div id="main-app" style="display: none;">
+        <header>
+            <span class="status-node">USER: ADMIN_AHMET</span>
+            <span class="status-node">IP: 192.168.1.105</span>
+            <span class="status-node">STATUS: <span class="blink">ENCRYPTED</span></span>
+        </header>
+
         <div class="tabs">
-            <button class="tab-link active" onclick="openTab(event, 'security')">🔐 GÜVENLİK</button>
-            <button class="tab-link" onclick="openTab(event, 'defend')">🛡️ BOT SAVUNMA</button>
+            <button class="tab-link active" onclick="openTab(event, 'terminal')">💻 TERMİNAL</button>
+            <button class="tab-link" onclick="openTab(event, 'security')">🔐 ŞİFRE ANALİZ</button>
+            <button class="tab-link" onclick="openTab(event, 'network')">📡 NETWORK SCAN</button>
         </div>
 
-        <div id="security" class="tab-content show">
-            <h3>Şifre Analiz Motoru (Java)</h3>
-            <input type="password" id="passIn" placeholder="Analiz edilecek şifre...">
-            <div id="status" style="margin-top: 10px;">Sistem analiz için hazır.</div>
+        <div id="terminal" class="tab-content show">
+            <div id="log-box"></div>
+            <div class="input-line">> <span id="typing-effect"></span><span class="cursor">_</span></div>
         </div>
 
-        <div id="defend" class="tab-content">
-            <h3>Bot Savunma Protokolü</h3>
-            <p>Durum: <span style="color: #0f0;">AKTİF</span></p>
-            <p style="font-size: 12px; color: #888;">"Görünmez, izlenemez, yakalanamaz."</p>
+        <div id="security" class="tab-content">
+            <h3>SHIELD-X ANALİZ MOTORU</h3>
+            <p>Şifre Güvenlik Testi Yapın:</p>
+            <input type="password" id="passIn" oninput="analyzePass()" placeholder="Şifreyi buraya girin...">
+            <div id="pass-status" style="margin-top: 15px; font-weight: bold;">Analiz Bekleniyor...</div>
+        </div>
+
+        <div id="network" class="tab-content">
+            <h3>AKTİF NETWORK TARAMASI</h3>
+            <div class="scan-bar"><div class="scan-progress"></div></div>
+            <p id="scan-text">Paketler izleniyor...</p>
+            <ul id="device-list">
+                <li>[FOUND] Ensar_PC - Port 8080 (Blocked)</li>
+                <li>[FOUND] School_Server - Mainframe (Secured)</li>
+            </ul>
         </div>
     </div>
 
