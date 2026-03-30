@@ -2,61 +2,49 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE MACHINE | OS v4.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE MACHINE v5.0 - Ahmet DEV</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="desktop">
-        <div class="icons-container">
-            <div class="icon" onclick="openWindow('terminal-win')">📟<span>Terminal</span></div>
-            <div class="icon" onclick="openWindow('files-win')">📂<span>Vault Files</span></div>
-            <div class="icon" onclick="openWindow('appbee-win')">🐝<span>AppBee OS</span></div>
-        </div>
-
-        <div id="terminal-win" class="window">
+        <div id="terminal-win" class="window" style="width: 600px; top: 50px; left: 50px;">
             <div class="window-header" onmousedown="dragElement(this)">
-                <span>admin@secure-machine:~#</span>
+                <span>💻 Secure Terminal (Py/Java Support)</span>
                 <button onclick="closeWindow('terminal-win')">●</button>
             </div>
-            <div class="window-body" id="log-box">
-                <div style="color: #0f0;">[SYSTEM] SECURE MACHINE v4.0 KERNEL LOADED.</div>
-                <div>Yardım için 'help' yazın.</div>
+            <div id="log-box" class="window-body terminal-body">
+                <div style="color: #0f0;">[SYSTEM READY] Komut bekliyor... ('help' yazın)</div>
             </div>
-            <div class="terminal-input">
-                <span>></span><input type="text" id="cmd-input" placeholder="Komut yazın..." autofocus>
-            </div>
-        </div>
-
-        <div id="files-win" class="window" style="display:none; width: 350px;">
-            <div class="window-header" onmousedown="dragElement(this)">
-                <span>Vault Explorer</span>
-                <button onclick="closeWindow('files-win')">●</button>
-            </div>
-            <div class="window-body">
-                <div class="file-item">📁 backup_logs</div>
-                <div class="file-item">📁 encrypted_data</div>
-                <div class="file-item" style="color:#f44;">📄 secret_keys.txt</div>
-                <div class="file-item">📄 config.sys</div>
+            <div class="terminal-input-line">
+                <span>admin@secure:~$</span>
+                <input type="text" id="cmd-input" autofocus autocomplete="off">
             </div>
         </div>
 
-        <div id="appbee-win" class="window" style="display:none; width: 450px; height: 500px;">
+        <div id="leaderboard-win" class="window" style="display:none; width: 320px; top: 100px; right: 50px;">
             <div class="window-header" onmousedown="dragElement(this)">
-                <span>AppBee Information Center</span>
-                <button onclick="closeWindow('appbee-win')">●</button>
+                <span>🏆 Global Rankings</span>
+                <button onclick="closeWindow('leaderboard-win')">●</button>
             </div>
             <div class="window-body">
-                <h2 style="color:#0f0">🐝 AppBee Nedir?</h2>
-                <p>AppBee, modern yazılım dünyasında sistemleri yönetmeyi kolaylaştıran, hız ve güvenliği bir arada sunan profesyonel bir altyapıdır.</p>
-                <h3 style="color:#0f0">🚀 Neden İlham Aldık?</h3>
-                <p>Secure Machine projesi tasarlanırken AppBee'nin <b>hızlı dağıtım</b> ve <b>asla sarsılmaz güvenlik</b> protokollerinden ilham alındı.</p>
-                <h3 style="color:#0f0">🛠️ Nasıl Kullanılır?</h3>
-                <ul>
-                    <li>Sistemleri tek panelden izle.</li>
-                    <li>Siber saldırılara karşı otomatik kalkan oluştur.</li>
-                    <li>Verilerini bulut üzerinde %100 güvenli tut.</li>
-                </ul>
+                <ul id="leader-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+                <hr style="border:0; border-top: 1px solid #333; margin: 15px 0;">
+                <div style="text-align:center; color:#0f0; font-family: monospace;">
+                    <div>Sistemde Kalma: <span id="session-timer">00:00</span></div>
+                    <div style="font-size: 18px; font-weight: bold; margin-top: 5px;">Puan: <span id="user-points">0</span></div>
+                </div>
             </div>
+        </div>
+
+        <div id="taskbar">
+            <div class="start-btn" onclick="openWindow('leaderboard-win')">🏆 LİDERLİK TABLOSU</div>
+            <div class="task-items">
+                <span class="task-node">📡 Bağlantı: AKTİF</span>
+                <span class="task-node">🛡️ Firewall: YÜKSEK</span>
+                <span class="task-node">🐍 Python/Java: HAZIR</span>
+            </div>
+            <div id="live-clock">00:00:00</div>
         </div>
     </div>
     <script src="script.js"></script>
