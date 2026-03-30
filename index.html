@@ -2,14 +2,14 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE MACHINE | OS v3.0 PRO</title>
+    <title>SECURE MACHINE | OS v3.1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="desktop">
         <div id="side-info">
             <h3>📊 SİSTEM DURUMU</h3>
-            <div class="stat-item">CPU: <span id="cpu-load">12%</span></div>
+            <div class="stat-item">CPU: <span id="cpu-load">8%</span></div>
             <div class="stat-item">NETWORK: SECURE</div>
             <hr>
             <h3>📖 KULLANIM KILAVUZU</h3>
@@ -29,11 +29,11 @@
                 <button onclick="closeWindow('terminal-win')">●</button>
             </div>
             <div class="window-body" id="log-box">
-                <div style="color: #0f0;">[SYSTEM] SECURE MACHINE KERNEL LOADED.</div>
+                <div style="color: #0f0; text-shadow: 0 0 5px #0f0;">[SYSTEM] SECURE MACHINE v3.1 KERNEL LOADED.</div>
                 <div>Giriş başarılı. Sistem komut bekliyor...</div>
             </div>
             <div class="terminal-input">
-                <span>></span><input type="text" id="cmd-input" onkeydown="runCommand(event)" autofocus>
+                <span>></span><input type="text" id="cmd-input" placeholder="Komut yazın..." autofocus>
             </div>
         </div>
 
@@ -44,15 +44,14 @@
             </div>
             <div class="window-body">
                 <h4>🛡️ Güvenlik Katmanı</h4>
-                <p>Bu makine 256-bit AES şifreleme ile korunmaktadır. Tüm veri akışı güvenli gateway üzerinden filtrelenir.</p>
-                <p><b>Geliştirici Notu:</b> Yazılım dünyasında başarının anahtarı sürekli öğrenmektir.</p>
+                <p>Bu makine AES şifreleme ile korunmaktadır. Tüm veri akışı güvenli gateway üzerinden filtrelenir.</p>
             </div>
         </div>
 
         <div id="footer-bar">
             <div class="career-text">🚀 Kariyer Gelişimi İçin Tavsiye:</div>
-            <a href="https://appbee.prolab.com" target="_blank" class="recommend-btn">
-                <span>🔥 AppBee ProLab'ı İncele</span>
+            <a href="https://appbee.com" target="_blank" class="recommend-btn">
+                <span>🔥 AppBee'yi İncele</span>
             </a>
         </div>
     </div>
