@@ -1,52 +1,48 @@
-const logs = [
-    "[INFO] GHOST-SHIELD v5.0 sistemi başlatılıyor...",
-    "[INFO] Firewall katmanları yükleniyor: %100",
-    "[WARN] Harici bağlantı tespit edildi: 182.20.10.4",
-    "[INFO] Paket izleme başlatıldı (Mode: Stealth)",
-    "[SUCCESS] SQL veri tabanı şifrelendi.",
-    "[INFO] Bilişim Hocası sistemi izliyor...",
-    "[ERROR] Hacker sızma girişimi engellendi!",
-    "[INFO] Kernel protokolleri optimize ediliyor..."
-];
+function openWindow(id) { document.getElementById(id).style.display = 'block'; }
+function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
 
-function enterSystem() {
-    document.getElementById('welcome-screen').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
-    startTerminal();
-}
-
-function startTerminal() {
-    let i = 0;
-    const box = document.getElementById('log-box');
-    setInterval(() => {
-        if(i < logs.length) {
-            box.innerHTML += `<div>${logs[i]}</div>`;
-            box.scrollTop = box.scrollHeight;
-            i++;
+function runCommand(event) {
+    if (event.key === "Enter") {
+        const input = document.getElementById('cmd-input');
+        const box = document.getElementById('log-box');
+        const cmd = input.value.toLowerCase().trim();
+        
+        box.innerHTML += `<div><span style="color:#0f0">admin@secure-machine:~$</span> ${input.value}</div>`;
+        
+        if(cmd === "help") {
+            box.innerHTML += "<div>- <b>scan</b>: Network analizi yapar.<br>- <b>status</b>: Donanım bilgisini gösterir.<br>- <b>whoami</b>: Yetki seviyesini gösterir.<br>- <b>clear</b>: Ekranı temizler.</div>";
+        } else if(cmd === "scan") {
+            box.innerHTML += "<div style='color:cyan'>Analiz: [FOUND] AppBee ProLab üzerinden veri akışı optimize edildi.</div>";
+        } else if(cmd === "status") {
+            box.innerHTML += "<div>Kernel: SECURE_OS_v3 | Node: Innova_Cloud | Status: Stable</div>";
+        } else if(cmd === "clear") {
+            box.innerHTML = "";
+        } else {
+            box.innerHTML += "<div style='color:#f44'>Hata: Bilinmeyen komut. 'help' yazın.</div>";
         }
-    }, 1500);
+        
+        input.value = "";
+        box.scrollTop = box.scrollHeight;
+    }
 }
 
-function analyzePass() {
-    const val = document.getElementById('passIn').value;
-    const status = document.getElementById('pass-status');
-    if(val.length < 5) { status.innerHTML = "DURUM: <span style='color:red'>ZAYIF</span>"; }
-    else if(val.length < 10) { status.innerHTML = "DURUM: <span style='color:orange'>ORTA</span>"; }
-    else { status.innerHTML = "DURUM: <span style='color:lime'>AŞILAMAZ!</span>"; }
+// Pencere Sürükleme
+function dragElement(header) {
+    const elmnt = header.parentElement;
+    let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+    header.onmousedown = (e) => {
+        p3 = e.clientX; p4 = e.clientY;
+        document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+        document.onmousemove = (e) => {
+            p1 = p3 - e.clientX; p2 = p4 - e.clientY;
+            p3 = e.clientX; p4 = e.clientY;
+            elmnt.style.top = (elmnt.offsetTop - p2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - p1) + "px";
+        };
+    };
 }
 
-function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tab-content");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-        tabcontent[i].classList.remove("show");
-    }
-    tablinks = document.getElementsByClassName("tab-link");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    document.getElementById(tabName).style.display = "block";
-    document.getElementById(tabName).classList.add("show");
-    evt.currentTarget.className += " active";
-}
+// Dinamik CPU Simülasyonu
+setInterval(() => {
+    document.getElementById('cpu-load').innerText = Math.floor(Math.random() * 15 + 3) + "%";
+}, 2000);

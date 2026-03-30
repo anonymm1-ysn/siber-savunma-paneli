@@ -2,54 +2,60 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GHOST-SHIELD v5.0 | ALPHA ACCESS</title>
+    <title>SECURE MACHINE | OS v3.0 PRO</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="welcome-screen">
-        <div class="matrix-bg"></div>
-        <h1 class="glitch" data-text="SYSTEM: LOCKED">SYSTEM: LOCKED</h1>
-        <p class="warning">[ KRİTİK GÜVENLİK İHLALİ TESPİT EDİLDİ ]</p>
-        <button onclick="enterSystem()" class="enter-btn">PROTOKOLÜ BAŞLAT</button>
+    <div id="desktop">
+        <div id="side-info">
+            <h3>📊 SİSTEM DURUMU</h3>
+            <div class="stat-item">CPU: <span id="cpu-load">12%</span></div>
+            <div class="stat-item">NETWORK: SECURE</div>
+            <hr>
+            <h3>📖 KULLANIM KILAVUZU</h3>
+            <p>• Terminale <b>help</b> yazarak siber araçları başlat.</p>
+            <p>• Pencereleri üstten tutarak istediğin yere sürükle.</p>
+        </div>
+
+        <div class="icons-container">
+            <div class="icon" onclick="openWindow('terminal-win')">📟<span>Secure Terminal</span></div>
+            <div class="icon" onclick="openWindow('files-win')">📂<span>Vault Files</span></div>
+            <div class="icon" onclick="openWindow('info-win')">📜<span>Sistem Notları</span></div>
+        </div>
+
+        <div id="terminal-win" class="window">
+            <div class="window-header" onmousedown="dragElement(this)">
+                <span>admin@secure-machine:~#</span>
+                <button onclick="closeWindow('terminal-win')">●</button>
+            </div>
+            <div class="window-body" id="log-box">
+                <div style="color: #0f0;">[SYSTEM] SECURE MACHINE KERNEL LOADED.</div>
+                <div>Giriş başarılı. Sistem komut bekliyor...</div>
+            </div>
+            <div class="terminal-input">
+                <span>></span><input type="text" id="cmd-input" onkeydown="runCommand(event)" autofocus>
+            </div>
+        </div>
+
+        <div id="info-win" class="window" style="display:none; width: 400px;">
+            <div class="window-header" onmousedown="dragElement(this)">
+                <span>Siber Protokoller</span>
+                <button onclick="closeWindow('info-win')">●</button>
+            </div>
+            <div class="window-body">
+                <h4>🛡️ Güvenlik Katmanı</h4>
+                <p>Bu makine 256-bit AES şifreleme ile korunmaktadır. Tüm veri akışı güvenli gateway üzerinden filtrelenir.</p>
+                <p><b>Geliştirici Notu:</b> Yazılım dünyasında başarının anahtarı sürekli öğrenmektir.</p>
+            </div>
+        </div>
+
+        <div id="footer-bar">
+            <div class="career-text">🚀 Kariyer Gelişimi İçin Tavsiye:</div>
+            <a href="https://appbee.prolab.com" target="_blank" class="recommend-btn">
+                <span>🔥 AppBee ProLab'ı İncele</span>
+            </a>
+        </div>
     </div>
-
-    <div id="main-app" style="display: none;">
-        <header>
-            <span class="status-node">USER: ADMIN_AHMET</span>
-            <span class="status-node">IP: 192.168.1.105</span>
-            <span class="status-node">STATUS: <span class="blink">ENCRYPTED</span></span>
-        </header>
-
-        <div class="tabs">
-            <button class="tab-link active" onclick="openTab(event, 'terminal')">💻 TERMİNAL</button>
-            <button class="tab-link" onclick="openTab(event, 'security')">🔐 ŞİFRE ANALİZ</button>
-            <button class="tab-link" onclick="openTab(event, 'network')">📡 NETWORK SCAN</button>
-        </div>
-
-        <div id="terminal" class="tab-content show">
-            <div id="log-box"></div>
-            <div class="input-line">> <span id="typing-effect"></span><span class="cursor">_</span></div>
-        </div>
-
-        <div id="security" class="tab-content">
-            <h3>SHIELD-X ANALİZ MOTORU</h3>
-            <p>Şifre Güvenlik Testi Yapın:</p>
-            <input type="password" id="passIn" oninput="analyzePass()" placeholder="Şifreyi buraya girin...">
-            <div id="pass-status" style="margin-top: 15px; font-weight: bold;">Analiz Bekleniyor...</div>
-        </div>
-
-        <div id="network" class="tab-content">
-            <h3>AKTİF NETWORK TARAMASI</h3>
-            <div class="scan-bar"><div class="scan-progress"></div></div>
-            <p id="scan-text">Paketler izleniyor...</p>
-            <ul id="device-list">
-                <li>[FOUND] Ensar_PC - Port 8080 (Blocked)</li>
-                <li>[FOUND] School_Server - Mainframe (Secured)</li>
-            </ul>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
