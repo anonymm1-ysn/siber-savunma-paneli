@@ -2,25 +2,15 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE MACHINE | OS v3.1</title>
+    <title>SECURE MACHINE | OS v4.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="desktop">
-        <div id="side-info">
-            <h3>📊 SİSTEM DURUMU</h3>
-            <div class="stat-item">CPU: <span id="cpu-load">8%</span></div>
-            <div class="stat-item">NETWORK: SECURE</div>
-            <hr>
-            <h3>📖 KULLANIM KILAVUZU</h3>
-            <p>• Terminale <b>help</b> yazarak siber araçları başlat.</p>
-            <p>• Pencereleri üstten tutarak istediğin yere sürükle.</p>
-        </div>
-
         <div class="icons-container">
-            <div class="icon" onclick="openWindow('terminal-win')">📟<span>Secure Terminal</span></div>
+            <div class="icon" onclick="openWindow('terminal-win')">📟<span>Terminal</span></div>
             <div class="icon" onclick="openWindow('files-win')">📂<span>Vault Files</span></div>
-            <div class="icon" onclick="openWindow('info-win')">📜<span>Sistem Notları</span></div>
+            <div class="icon" onclick="openWindow('appbee-win')">🐝<span>AppBee OS</span></div>
         </div>
 
         <div id="terminal-win" class="window">
@@ -29,30 +19,44 @@
                 <button onclick="closeWindow('terminal-win')">●</button>
             </div>
             <div class="window-body" id="log-box">
-                <div style="color: #0f0; text-shadow: 0 0 5px #0f0;">[SYSTEM] SECURE MACHINE v3.1 KERNEL LOADED.</div>
-                <div>Giriş başarılı. Sistem komut bekliyor...</div>
+                <div style="color: #0f0;">[SYSTEM] SECURE MACHINE v4.0 KERNEL LOADED.</div>
+                <div>Yardım için 'help' yazın.</div>
             </div>
             <div class="terminal-input">
                 <span>></span><input type="text" id="cmd-input" placeholder="Komut yazın..." autofocus>
             </div>
         </div>
 
-        <div id="info-win" class="window" style="display:none; width: 400px;">
+        <div id="files-win" class="window" style="display:none; width: 350px;">
             <div class="window-header" onmousedown="dragElement(this)">
-                <span>Siber Protokoller</span>
-                <button onclick="closeWindow('info-win')">●</button>
+                <span>Vault Explorer</span>
+                <button onclick="closeWindow('files-win')">●</button>
             </div>
             <div class="window-body">
-                <h4>🛡️ Güvenlik Katmanı</h4>
-                <p>Bu makine AES şifreleme ile korunmaktadır. Tüm veri akışı güvenli gateway üzerinden filtrelenir.</p>
+                <div class="file-item">📁 backup_logs</div>
+                <div class="file-item">📁 encrypted_data</div>
+                <div class="file-item" style="color:#f44;">📄 secret_keys.txt</div>
+                <div class="file-item">📄 config.sys</div>
             </div>
         </div>
 
-        <div id="footer-bar">
-            <div class="career-text">🚀 Kariyer Gelişimi İçin Tavsiye:</div>
-            <a href="https://appbee.com" target="_blank" class="recommend-btn">
-                <span>🔥 AppBee'yi İncele</span>
-            </a>
+        <div id="appbee-win" class="window" style="display:none; width: 450px; height: 500px;">
+            <div class="window-header" onmousedown="dragElement(this)">
+                <span>AppBee Information Center</span>
+                <button onclick="closeWindow('appbee-win')">●</button>
+            </div>
+            <div class="window-body">
+                <h2 style="color:#0f0">🐝 AppBee Nedir?</h2>
+                <p>AppBee, modern yazılım dünyasında sistemleri yönetmeyi kolaylaştıran, hız ve güvenliği bir arada sunan profesyonel bir altyapıdır.</p>
+                <h3 style="color:#0f0">🚀 Neden İlham Aldık?</h3>
+                <p>Secure Machine projesi tasarlanırken AppBee'nin <b>hızlı dağıtım</b> ve <b>asla sarsılmaz güvenlik</b> protokollerinden ilham alındı.</p>
+                <h3 style="color:#0f0">🛠️ Nasıl Kullanılır?</h3>
+                <ul>
+                    <li>Sistemleri tek panelden izle.</li>
+                    <li>Siber saldırılara karşı otomatik kalkan oluştur.</li>
+                    <li>Verilerini bulut üzerinde %100 güvenli tut.</li>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

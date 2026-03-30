@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('cmd-input');
     if(input) {
-        input.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                runCommand();
-            }
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') runCommand();
         });
     }
 });
@@ -16,23 +14,22 @@ function runCommand() {
     const input = document.getElementById('cmd-input');
     const box = document.getElementById('log-box');
     const cmd = input.value.toLowerCase().trim();
-    
     if (cmd === "") return;
 
-    box.innerHTML += `<div><span style="color:#0f0">admin@secure-machine:~$</span> ${input.value}</div>`;
+    box.innerHTML += `<div><span style="color:#0f0">admin@secure:~$</span> ${input.value}</div>`;
     
     if(cmd === "help") {
-        box.innerHTML += "<div>- <b>scan</b>: Network analizi yapar.<br>- <b>status</b>: Donanım bilgisini gösterir.<br>- <b>clear</b>: Ekranı temizler.</div>";
+        box.innerHTML += "<div>- <b>scan</b>: Güvenlik taraması yapar.<br>- <b>open vault</b>: Kasayı açar.<br>- <b>clear</b>: Ekranı temizler.</div>";
     } else if(cmd === "scan") {
-        box.innerHTML += "<div style='color:cyan'>Analiz: [FOUND] AppBee üzerinden sistem optimize edildi.</div>";
-    } else if(cmd === "status") {
-        box.innerHTML += "<div>Kernel: SECURE_OS_v3.1 | Status: Stable | User: Ahmet</div>";
+        box.innerHTML += "<div style='color:cyan'>Analiz: AppBee altyapısı kullanılarak tüm açıklar kapatıldı!</div>";
+    } else if(cmd === "open vault") {
+        openWindow('files-win');
+        box.innerHTML += "<div>[SUCCESS] Vault Files erişimi sağlandı.</div>";
     } else if(cmd === "clear") {
-        box.innerHTML = "<div>Terminal temizlendi.</div>";
+        box.innerHTML = "";
     } else {
-        box.innerHTML += "<div style='color:#f44'>Hata: Komut anlaşılamadı. 'help' yazın.</div>";
+        box.innerHTML += "<div style='color:#f44'>Komut anlaşılamadı. 'help' yazın.</div>";
     }
-    
     input.value = "";
     box.scrollTop = box.scrollHeight;
 }
@@ -51,8 +48,3 @@ function dragElement(header) {
         };
     };
 }
-
-setInterval(() => {
-    const cpu = document.getElementById('cpu-load');
-    if(cpu) cpu.innerText = Math.floor(Math.random() * 10 + 2) + "%";
-}, 3000);
