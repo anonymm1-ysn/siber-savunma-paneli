@@ -1,46 +1,32 @@
-body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
+body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #000; color: white; }
 
 
-#desktop { 
-    width: 100%; height: 100%; position: relative; 
-    background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
-    background-size: cover;
-}
+#login-screen { position: fixed; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+.login-container { background: rgba(255,255,255,0.05); padding: 50px; border-radius: 20px; text-align: center; backdrop-filter: blur(20px); width: 380px; border: 1px solid rgba(255,255,255,0.1); }
+.login-container input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #444; background: #222; color: #0f0; box-sizing: border-box; }
+.auth-btn { display: flex; align-items: center; justify-content: center; background: white; color: #444; padding: 12px; border-radius: 8px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.auth-btn img { width: 20px; margin-right: 12px; }
 
 
-#login-screen { 
-    position: fixed; width: 100%; height: 100%; 
-    background: radial-gradient(circle, #0a1a0a 0%, #000 100%); 
-    z-index: 9999; display: flex; align-items: center; justify-content: center; 
-}
-.login-box { 
-    background: rgba(0, 0, 0, 0.8); padding: 50px; 
-    border: 1px solid #0f0; border-radius: 20px; 
-    text-align: center; box-shadow: 0 0 50px rgba(0, 255, 0, 0.1); 
-}
-.login-box input { 
-    background: transparent; border: none; border-bottom: 2px solid #0f0; 
-    color: #0f0; padding: 12px; margin-bottom: 15px; width: 250px; 
-    text-align: center; outline: none; font-size: 16px; font-family: monospace;
-}
-.login-box button { 
-    background: #0f0; color: #000; border: none; padding: 12px 40px; 
-    cursor: pointer; font-weight: bold; border-radius: 5px; 
-    font-size: 14px; transition: 0.3s; margin-top: 10px;
-}
-.login-box button:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+#desktop { position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; }
+.start-overlay { background: rgba(0,0,0,0.6); padding: 60px; border-radius: 30px; backdrop-filter: blur(10px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.start-overlay h1 { font-size: 48px; margin-bottom: 10px; font-weight: 300; }
+.start-overlay p { font-size: 18px; color: #aaa; margin-bottom: 40px; }
+.start-vm-btn { background: #0078D7; color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; margin: 0 auto; transition: 0.2s; }
+.start-vm-btn:hover { background: #0084ef; transform: scale(1.05); }
+.start-vm-btn img { width: 25px; }
 
 
-.window { position: absolute; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 10px; color: white; display: flex; flex-direction: column; z-index: 10; }
-.window-header { background: rgba(255, 255, 255, 0.05); padding: 10px; cursor: move; display: flex; justify-content: space-between; align-items: center; }
-.window-header button { background: #ff5f56; border: none; width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-.window-body { padding: 15px; overflow-y: auto; max-height: 400px; }
-.terminal-body { font-family: 'Courier New', monospace; font-size: 14px; color: #0f0; }
-.terminal-input-line { display: flex; padding: 10px; background: rgba(0,0,0,0.3); border-top: 1px solid #222; }
-#cmd-input { background: transparent; border: none; color: #0f0; outline: none; flex-grow: 1; margin-left: 8px; font-family: monospace; }
-.file-item { padding: 8px; border-bottom: 1px solid #222; font-family: monospace; }
-#leader-list li { padding: 10px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-size: 13px; }
-.real-user { background: rgba(0, 255, 0, 0.1); border-left: 4px solid #0f0; font-weight: bold; }
-#taskbar { position: absolute; bottom: 0; width: 100%; height: 50px; background: rgba(0,0,0,0.8); border-top: 1px solid #0f0; display: flex; align-items: center; padding: 0 20px; box-sizing: border-box; z-index: 1000; }
-.start-btn { background: #0f0; color: #000; padding: 6px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
-#live-clock { margin-left: auto; color: white; font-family: monospace; font-weight: bold; }
+#vm-fullscreen { position: fixed; width: 100%; height: 100%; background: url('https://wallpaperaccess.com/full/2225330.jpg') no-repeat center; background-size: cover; z-index: 5000; }
+.vm-content { position: relative; height: 100%; padding: 30px; }
+.window { position: absolute; background: rgba(0,0,0,0.8); border: 1px solid #555; color: white; display: flex; flex-direction: column; }
+.window-header { background: rgba(255,255,255,0.1); padding: 8px 15px; cursor: move; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
+.terminal-input-area { background: #000; padding: 10px; display: flex; border-top: 1px solid #222; }
+#cmd-input { background: transparent; border: none; color: #0f0; flex-grow: 1; outline: none; font-family: monospace; resize: none; overflow: hidden; padding-left: 10px; font-size: 14px; }
+.file-icon { width: 80px; text-align: center; cursor: pointer; font-size: 12px; }
+.file-icon img { width: 50px; display: block; margin: 0 auto 5px; }
+
+
+#taskbar { position: absolute; bottom: 0; width: 100%; height: 45px; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,0.1); }
+.start-btn-win8 { width: 35px; height: 35px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png') no-repeat center; background-size: 22px; cursor: pointer; }
+#live-clock { margin-left: auto; font-size: 12px; font-family: monospace; }

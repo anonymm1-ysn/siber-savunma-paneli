@@ -2,82 +2,79 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE MACHINE v8.5 - Ahmet DEV</title>
+    <title>SECURE MACHINE OS - Nature Edition</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="login-screen">
-        <div class="login-box">
-            <h2 style="color: #0f0; font-family: monospace; letter-spacing: 2px;">SİSTEME KAYIT</h2>
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="user-name-input" placeholder="Kullanıcı Adı..." autocomplete="off">
-                <br>
-                <input type="password" id="login-pass" placeholder="Şifre: 1234">
+        <div class="login-container">
+            <h1>AppBee Secure</h1>
+            <div class="auth-options">
+                <div class="auth-btn google" onclick="authLogin('Google')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg"> Google Login
+                </div>
             </div>
-            <button onclick="checkLogin()">SİSTEMİ BAŞLAT</button>
-            <div id="login-error" style="color: #ff4444; font-size: 12px; margin-top: 15px; font-family: monospace;"></div>
+            <div class="divider"><span>veya</span></div>
+            <input type="password" id="login-pass" placeholder="Şifre (1234)">
+            <button onclick="checkPass()">SİSTEMİ BAŞLAT</button>
+            <div id="login-error"></div>
         </div>
     </div>
 
-    <div id="desktop" style="display:none;">
-        <div id="terminal-win" class="window" style="width: 550px; top: 40px; left: 40px;">
-            <div class="window-header" onmousedown="dragElement(this)">
-                <span>💻 Terminal (Py/Java)</span>
-                <button onclick="closeWindow('terminal-win')">●</button>
-            </div>
-            <div id="log-box" class="window-body terminal-body">
-                <div style="color: #0f0;">[ERİŞİM ONAYLANDI] Hoş geldin.</div>
-            </div>
-            <div class="terminal-input-line">
-                <span id="prompt-label">admin@secure:~$</span>
-                <input type="text" id="cmd-input" autocomplete="off">
-            </div>
+    <div id="desktop" style="display:none; background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center;">
+        <div class="start-overlay">
+            <h1>Hoş Geldin, <span id="welcome-name"></span></h1>
+            <p>Sanal sistemini başlatmak için aşağıdaki butona tıkla.</p>
+            <button class="start-vm-btn" onclick="startVirtualMachine()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png">
+                WINDOWS 8 PRO'YU BAŞLAT
+            </button>
         </div>
+    </div>
 
-        <div id="appbee-win" class="window" style="display:none; width: 380px; top: 60px; left: 620px;">
-            <div class="window-header" onmousedown="dragElement(this)">
-                <span>🐝 AppBee ProLab</span>
-                <button onclick="closeWindow('appbee-win')">●</button>
+    <div id="vm-fullscreen" class="win8-ui" style="display:none;">
+        <div class="vm-content">
+            <div class="file-icon" onclick="openWindow('readme-win')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png">
+                <span>README.txt</span>
             </div>
-            <div class="window-body" style="line-height: 1.5; font-size: 14px;">
-                <h3 style="color: #0f0;">Proje Hakkında</h3>
-                <p>Bu platform, <b>AppBee ProLab</b> ağ simülasyonlarından ilham alan bir geliştirici üssüdür.</p>
-                <hr style="border-color: #333;">
-                <p style="color: #888; font-size: 12px;">Geliştirici: Ahmet_DEV</p>
-            </div>
-        </div>
 
-        <div id="vault-win" class="window" style="width: 280px; top: 320px; left: 650px;">
-            <div class="window-header" onmousedown="dragElement(this)">
-                <span>📂 The Vault</span>
-                <button onclick="closeWindow('vault-win')">●</button>
+            <div id="leaderboard-win" class="window" style="width: 250px; right: 20px; top: 20px;">
+                <div class="window-header">🏆 Sıralama</div>
+                <div class="window-body">
+                    <ul id="leader-list"></ul>
+                    <div class="points-badge">Puan: <span id="user-points">0</span></div>
+                </div>
             </div>
-            <div class="window-body">
-                <div class="file-item">📁 Python_Secrets.py</div>
-                <div class="file-item">📁 Java_Main.java</div>
-                <div class="file-item">📁 AppBee_Config.json</div>
-            </div>
-        </div>
 
-        <div id="leaderboard-win" class="window" style="display:none; width: 300px; top: 180px; left: 480px;">
-            <div class="window-header" onmousedown="dragElement(this)">
-                <span>🏆 Sıralama</span>
-                <button onclick="closeWindow('leaderboard-win')">●</button>
-            </div>
-            <div class="window-body">
-                <ul id="leader-list" style="list-style: none; padding: 0; margin: 0;"></ul>
-                <hr style="border:0; border-top: 1px solid #444; margin: 10px 0;">
-                <div style="text-align:center; color:#0f0; font-size: 12px; font-family: monospace;">
-                    Süre: <span id="session-timer">00:00</span> | Puan: <span id="user-points">0</span>
+            <div id="terminal-win" class="window" style="width: 600px; height: 350px; bottom: 60px; left: 50px;">
+                <div class="window-header">💻 AppBee Pro Terminal</div>
+                <div id="log-box" class="window-body terminal-body">
+                    <div style="color: #0f0;">[SYSTEM READY] Çok satırlı mod aktif.</div>
+                </div>
+                <div class="terminal-input-area">
+                    <span id="term-tag">user@win8:~$</span>
+                    <textarea id="cmd-input" rows="1" placeholder="Komut yaz..."></textarea>
                 </div>
             </div>
         </div>
 
         <div id="taskbar">
-            <div class="start-btn" onclick="openWindow('appbee-win')">🐝 APPBEA</div>
-            <div class="start-btn" onclick="openWindow('leaderboard-win')" style="margin-left: 10px;">🏆 SIRALAMA</div>
-            <div class="start-btn" onclick="openWindow('vault-win')" style="margin-left: 10px; background: #333; color: #fff;">📂 VAULT</div>
-            <div id="live-clock">00:00:00</div>
+            <div class="start-btn-win8" onclick="powerOffVM()"></div>
+            <div class="taskbar-item active">Windows 8 Pro OS</div>
+            <div id="live-clock">00:00</div>
+        </div>
+    </div>
+
+    <div id="readme-win" class="window" style="display:none; width: 400px; top: 100px; left: 200px; z-index: 2000;">
+        <div class="window-header">📄 README.txt - Not Defteri <button onclick="closeWindow('readme-win')">✖</button></div>
+        <div class="window-body" style="background: white; color: black; font-family: 'Courier New';">
+            <h3>NASIL KULLANILIR?</h3>
+            <p>1. Terminale 'print' veya 'scan' yazabilirsin.</p>
+            <p>2. Çok satırlı terminalde Shift+Enter ile aşağı inebilirsin.</p>
+            <p>3. AppBee Önerisi: Her 30 dk'da bir 5 puan kazanırsın.</p>
+            <p>4. Sıralamada kalıcı olmak için Google ile girin.</p>
         </div>
     </div>
 
