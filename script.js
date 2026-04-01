@@ -1,9 +1,10 @@
 let points = parseInt(localStorage.getItem('vaultPoints')) || 0;
 let currentUser = localStorage.getItem('vaultUser') || "";
-let botData = [{name: "Cyber_King", score: 3000}, {name: "Root_Admin", score: 1500}];
+
+let botData = [{name: "Siber_Göz", score: 500}, {name: "Bot_Admin", score: 250}];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Eğer isim varsa direkt Dağ ekranına geç (Login'i atla)
+    
     if (currentUser !== "") showDesktop();
     setupTerminal();
 });
@@ -12,7 +13,7 @@ function saveUser() {
     let name = document.getElementById('user-name-input').value.trim();
     if(name.length > 1) {
         currentUser = name;
-        localStorage.setItem('vaultUser', currentUser); // Sonsuza dek kaydet
+        localStorage.setItem('vaultUser', currentUser); 
         localStorage.setItem('vaultPoints', points);
         showDesktop();
     } else {
@@ -60,7 +61,7 @@ function runCommand() {
 
     box.innerHTML += `<div><span style="color:#0f0">${currentUser}@vault:~$</span> ${text}</div>`;
 
-    // JAVA MOTORU
+    
     if (text.toLowerCase().startsWith('system.out.println')) {
         const match = text.match(/\(([^)]+)\)/);
         const output = match ? match[1].replace(/['"]/g, '') : "Syntax Error: ; expected";
@@ -78,6 +79,7 @@ function runCommand() {
 
 function updateLeaderboard() {
     const list = document.getElementById('leader-list');
+   
     let all = [...botData, { name: currentUser, score: points }].sort((a, b) => b.score - a.score);
     list.innerHTML = all.map((u, i) => 
         `<li style="${u.name === currentUser ? 'color:#0f0; font-weight:bold;' : ''}">${i+1}. ${u.name} - ${u.score}</li>`
@@ -95,7 +97,7 @@ function powerOffVM() {
     document.getElementById('desktop-bg').style.display = 'flex';
 }
 
-// Puan Artışı (Dakikada 10 Puan)
+
 setInterval(() => {
     if(currentUser) {
         points += 10;
