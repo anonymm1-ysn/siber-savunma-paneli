@@ -1,32 +1,40 @@
-body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #000; color: white; }
+body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #000; }
 
 
-#login-screen { position: fixed; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-.login-container { background: rgba(255,255,255,0.05); padding: 50px; border-radius: 20px; text-align: center; backdrop-filter: blur(20px); width: 380px; border: 1px solid rgba(255,255,255,0.1); }
-.login-container input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #444; background: #222; color: #0f0; box-sizing: border-box; }
-.auth-btn { display: flex; align-items: center; justify-content: center; background: white; color: #444; padding: 12px; border-radius: 8px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
-.auth-btn img { width: 20px; margin-right: 12px; }
+#login-screen { position: fixed; inset: 0; background: #050505; z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; }
+.login-container { background: #111; padding: 40px; border-radius: 15px; border: 1px solid #333; width: 340px; text-align: center; }
+#user-name-input { width: 100%; padding: 12px; margin: 15px 0; background: #1a1a1a; border: 1px solid #444; color: #0f0; border-radius: 5px; box-sizing: border-box; }
+.main-login-btn { width: 100%; padding: 12px; background: #00adef; border: none; color: white; font-weight: bold; cursor: pointer; border-radius: 5px; }
 
 
-#desktop { position: fixed; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; }
-.start-overlay { background: rgba(0,0,0,0.6); padding: 60px; border-radius: 30px; backdrop-filter: blur(10px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-.start-overlay h1 { font-size: 48px; margin-bottom: 10px; font-weight: 300; }
-.start-overlay p { font-size: 18px; color: #aaa; margin-bottom: 40px; }
-.start-vm-btn { background: #0078D7; color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; margin: 0 auto; transition: 0.2s; }
-.start-vm-btn:hover { background: #0084ef; transform: scale(1.05); }
-.start-vm-btn img { width: 25px; }
+#desktop-bg { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c33?auto=format&fit=crop&w=1920&q=80') no-repeat center; background-size: cover; display: flex; align-items: center; justify-content: center; }
+.start-overlay { background: rgba(0,0,0,0.6); padding: 40px; border-radius: 20px; text-align: center; color: white; backdrop-filter: blur(8px); }
+.win8-start-tile { background: #0078d7; width: 220px; height: 110px; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+.win8-start-tile:hover { transform: scale(1.05); border-color: white; }
+.win8-start-tile img { width: 35px; margin-bottom: 8px; }
 
 
-#vm-fullscreen { position: fixed; width: 100%; height: 100%; background: url('https://wallpaperaccess.com/full/2225330.jpg') no-repeat center; background-size: cover; z-index: 5000; }
-.vm-content { position: relative; height: 100%; padding: 30px; }
-.window { position: absolute; background: rgba(0,0,0,0.8); border: 1px solid #555; color: white; display: flex; flex-direction: column; }
-.window-header { background: rgba(255,255,255,0.1); padding: 8px 15px; cursor: move; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
-.terminal-input-area { background: #000; padding: 10px; display: flex; border-top: 1px solid #222; }
-#cmd-input { background: transparent; border: none; color: #0f0; flex-grow: 1; outline: none; font-family: monospace; resize: none; overflow: hidden; padding-left: 10px; font-size: 14px; }
-.file-icon { width: 80px; text-align: center; cursor: pointer; font-size: 12px; }
-.file-icon img { width: 50px; display: block; margin: 0 auto 5px; }
+#vm-fullscreen { position: fixed; inset: 0; background: url('https://wallpaperaccess.com/full/2225330.jpg') no-repeat center; background-size: cover; z-index: 5000; }
+#terminal-fullscreen { position: fixed; inset: 0; background: #000; z-index: 6000; display: flex; flex-direction: column; padding: 25px; }
+.term-header { display: flex; justify-content: space-between; color: #0f0; border-bottom: 1px solid #333; padding-bottom: 10px; font-family: monospace; }
+.term-header button { background: #e81123; border: none; color: white; padding: 5px 15px; cursor: pointer; }
+.term-content { flex-grow: 1; overflow-y: auto; color: #0f0; font-family: 'Consolas', monospace; font-size: 16px; }
+.term-input-line { display: flex; border-top: 1px solid #333; padding-top: 15px; }
+#cmd-input { background: transparent; border: none; color: #fff; flex-grow: 1; outline: none; font-family: 'Consolas', monospace; resize: none; overflow: hidden; margin-left: 10px; font-size: 16px; }
 
 
-#taskbar { position: absolute; bottom: 0; width: 100%; height: 45px; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,0.1); }
-.start-btn-win8 { width: 35px; height: 35px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png') no-repeat center; background-size: 22px; cursor: pointer; }
-#live-clock { margin-left: auto; font-size: 12px; font-family: monospace; }
+.leaderboard-panel { position: absolute; right: 20px; top: 20px; background: rgba(0,0,0,0.85); padding: 15px; border-radius: 5px; width: 220px; color: white; border: 1px solid #444; }
+#leader-list { list-style: none; padding: 0; font-size: 14px; }
+#leader-list li { padding: 5px 0; border-bottom: 1px solid #222; }
+
+.desktop-icons { padding: 25px; display: flex; flex-direction: column; gap: 25px; }
+.icon { width: 75px; text-align: center; color: white; cursor: pointer; font-size: 13px; text-shadow: 1px 1px 3px black; }
+.icon img { width: 45px; margin-bottom: 6px; }
+#taskbar { position: absolute; bottom: 0; width: 100%; height: 40px; background: rgba(0,0,0,0.9); display: flex; align-items: center; padding: 0 15px; color: white; box-sizing: border-box; }
+.win-btn { width: 30px; height: 30px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png') center/contain no-repeat; cursor: pointer; }
+#live-clock { margin-left: auto; font-family: monospace; }
+
+
+.window { position: absolute; top: 120px; left: 150px; background: #fff; width: 380px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 5500; }
+.window-header { background: #222; color: white; padding: 5px 10px; display: flex; justify-content: space-between; }
+.notepad { color: #000; padding: 20px; min-height: 150px; font-family: 'Courier New', monospace; }

@@ -1,56 +1,45 @@
-let points = parseInt(localStorage.getItem('userPoints')) || 0;
-let currentUser = localStorage.getItem('userName') || "";
-let botData = [
-    { name: "AppBee_Mod", score: 600 },
-    { name: "CyberExpert", score: 450 },
-    { name: "Elite_Dev", score: 300 }
-];
+let points = parseInt(localStorage.getItem('vaultPoints')) || 0;
+let currentUser = localStorage.getItem('vaultUser') || "";
+let botData = [{name: "Cyber_King", score: 3000}, {name: "Root_Admin", score: 1500}];
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (currentUser) showDesktop();
+    // Eğer isim varsa direkt Dağ ekranına geç (Login'i atla)
+    if (currentUser !== "") showDesktop();
     setupTerminal();
 });
 
-function authLogin(provider) {
-    let email = prompt(`${provider} Hesabınız (Örn: ahmet@gmail.com):`);
-    if(email && email.includes('@')) {
-        currentUser = email.split('@')[0];
-        localStorage.setItem('userName', currentUser);
-        showDesktop();
-    }
-}
-
-function checkPass() {
-    const pass = document.getElementById('login-pass').value;
-    if(pass === "1234") {
-        currentUser = "Admin_Ahmet";
-        localStorage.setItem('userName', currentUser);
+function saveUser() {
+    let name = document.getElementById('user-name-input').value.trim();
+    if(name.length > 1) {
+        currentUser = name;
+        localStorage.setItem('vaultUser', currentUser); // Sonsuza dek kaydet
+        localStorage.setItem('vaultPoints', points);
         showDesktop();
     } else {
-        document.getElementById('login-error').innerText = "Hata: Geçersiz şifre!";
+        alert("Geçerli bir isim girin!");
     }
 }
 
 function showDesktop() {
     document.getElementById('login-screen').style.display = "none";
-    document.getElementById('desktop').style.display = "flex";
+    document.getElementById('desktop-bg').style.display = "flex";
     document.getElementById('welcome-name').innerText = currentUser;
     updateLeaderboard();
 }
 
 function startVirtualMachine() {
-    // Dağ ekranını gizle, Windows 8'i göster
-    document.getElementById('desktop').style.display = 'none';
+    document.getElementById('desktop-bg').style.display = 'none';
     document.getElementById('vm-fullscreen').style.display = 'block';
-    document.getElementById('term-tag').innerText = currentUser + "@win8:~$";
+    document.getElementById('term-tag').innerText = currentUser + "@vault:~$";
 }
 
-function powerOffVM() {
-    // Windows 8'i kapat, dağ ekranına geri dön
-    if(confirm("Sanal Makineyi kapatmak istiyor musunuz?")) {
-        document.getElementById('vm-fullscreen').style.display = 'none';
-        document.getElementById('desktop').style.display = 'flex';
-    }
+function openFullTerminal() { 
+    document.getElementById('terminal-fullscreen').style.display = 'flex'; 
+    document.getElementById('cmd-input').focus();
+}
+
+function closeFullTerminal() { 
+    document.getElementById('terminal-fullscreen').style.display = 'none'; 
 }
 
 function setupTerminal() {
@@ -60,9 +49,6 @@ function setupTerminal() {
             e.preventDefault();
             runCommand();
         }
-        // Otomatik satır yüksekliği
-        area.style.height = 'auto';
-        area.style.height = area.scrollHeight + 'px';
     });
 }
 
@@ -72,45 +58,51 @@ function runCommand() {
     const text = input.value.trim();
     if (!text) return;
 
-    box.innerHTML += `<div><span style="color:#0f0">${currentUser}@win8:~$</span> ${text.replace(/\n/g, '<br>')}</div>`;
+    box.innerHTML += `<div><span style="color:#0f0">${currentUser}@vault:~$</span> ${text}</div>`;
 
-    // Komut Mantığı
-    if (text.toLowerCase().includes('print')) {
-        box.innerHTML += `<div style="color:cyan;">[Output]: ${text.split('print')[1]}</div>`;
-    } else if (text.toLowerCase() === 'scan') {
-        box.innerHTML += `<div style="color:gray;">Scanning virtual nodes... [SECURE]</div>`;
+    // JAVA MOTORU
+    if (text.toLowerCase().startsWith('system.out.println')) {
+        const match = text.match(/\(([^)]+)\)/);
+        const output = match ? match[1].replace(/['"]/g, '') : "Syntax Error: ; expected";
+        box.innerHTML += `<div style="color:#f89820; padding-left:15px;">[Java Output]: ${output}</div>`;
+    } 
+    else if (text.toLowerCase() === 'clear') {
+        box.innerHTML = "";
     } else {
-        box.innerHTML += `<div style="color:red;">Komut simüle edildi.</div>`;
+        box.innerHTML += `<div style="color:#555;">Komut sistem tarafından işlendi.</div>`;
     }
 
     input.value = "";
-    input.style.height = 'auto';
     box.scrollTop = box.scrollHeight;
 }
 
 function updateLeaderboard() {
     const list = document.getElementById('leader-list');
-    let all = [...botData];
-    if (currentUser) all.push({ name: currentUser, score: points });
-    all.sort((a, b) => b.score - a.score);
-    
+    let all = [...botData, { name: currentUser, score: points }].sort((a, b) => b.score - a.score);
     list.innerHTML = all.map((u, i) => 
-        `<li style="${u.name === currentUser ? 'color:#0f0; font-weight:bold;' : ''}">${i+1}. ${u.name}: ${u.score}</li>`
+        `<li style="${u.name === currentUser ? 'color:#0f0; font-weight:bold;' : ''}">${i+1}. ${u.name} - ${u.score}</li>`
     ).join('');
     document.getElementById('user-points').innerText = points;
 }
 
-function openWindow(id) { document.getElementById(id).style.display = 'block'; }
-function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
+function toggleReadme() {
+    const r = document.getElementById('readme-win');
+    r.style.display = (r.style.display === 'none' || r.style.display === '') ? 'block' : 'none';
+}
 
-// Puan ve Saat
+function powerOffVM() {
+    document.getElementById('vm-fullscreen').style.display = 'none';
+    document.getElementById('desktop-bg').style.display = 'flex';
+}
+
+// Puan Artışı (Dakikada 10 Puan)
 setInterval(() => {
     if(currentUser) {
-        points += 5;
-        localStorage.setItem('userPoints', points);
+        points += 10;
+        localStorage.setItem('vaultPoints', points);
         updateLeaderboard();
     }
-}, 1800000);
+}, 60000);
 
 setInterval(() => {
     const clock = document.getElementById('live-clock');

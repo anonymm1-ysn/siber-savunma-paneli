@@ -2,82 +2,74 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE MACHINE OS - Nature Edition</title>
+    <title>SECURE VAULT OS - v20.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="login-screen">
         <div class="login-container">
-            <h1>AppBee Secure</h1>
-            <div class="auth-options">
-                <div class="auth-btn google" onclick="authLogin('Google')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg"> Google Login
-                </div>
-            </div>
-            <div class="divider"><span>veya</span></div>
-            <input type="password" id="login-pass" placeholder="Şifre (1234)">
-            <button onclick="checkPass()">SİSTEMİ BAŞLAT</button>
-            <div id="login-error"></div>
+            <h1 style="color: #00adef;">SİSTEME KAYIT</h1>
+            <p>Sıralama için adınızı girin:</p>
+            <input type="text" id="user-name-input" placeholder="Adınız..." autocomplete="off">
+            <button class="main-login-btn" onclick="saveUser()">KAYDET VE SİSTEMİ AÇ</button>
         </div>
     </div>
 
-    <div id="desktop" style="display:none; background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center;">
+    <div id="desktop-bg" style="display:none;">
         <div class="start-overlay">
             <h1>Hoş Geldin, <span id="welcome-name"></span></h1>
-            <p>Sanal sistemini başlatmak için aşağıdaki butona tıkla.</p>
-            <button class="start-vm-btn" onclick="startVirtualMachine()">
+            <div class="win8-start-tile" onclick="startVirtualMachine()">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png">
-                WINDOWS 8 PRO'YU BAŞLAT
-            </button>
+                <span>Windows 8 Pro</span>
+            </div>
         </div>
     </div>
 
-    <div id="vm-fullscreen" class="win8-ui" style="display:none;">
-        <div class="vm-content">
-            <div class="file-icon" onclick="openWindow('readme-win')">
+    <div id="vm-fullscreen" style="display:none;">
+        <div class="desktop-icons">
+            <div class="icon" onclick="openFullTerminal()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1104/1104845.png">
+                <span>Terminal</span>
+            </div>
+            <div class="icon" onclick="toggleReadme()">
                 <img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png">
                 <span>README.txt</span>
             </div>
+        </div>
 
-            <div id="leaderboard-win" class="window" style="width: 250px; right: 20px; top: 20px;">
-                <div class="window-header">🏆 Sıralama</div>
-                <div class="window-body">
-                    <ul id="leader-list"></ul>
-                    <div class="points-badge">Puan: <span id="user-points">0</span></div>
-                </div>
+        <div class="leaderboard-panel">
+            <h3>🏆 LİDERLİK TABLOSU</h3>
+            <ul id="leader-list"></ul>
+            <div class="my-score">Puan: <span id="user-points">0</span></div>
+        </div>
+
+        <div id="terminal-fullscreen" style="display:none;">
+            <div class="term-header">
+                <span>TERMINAL v2.0 - JAVA ENGINE</span>
+                <button onclick="closeFullTerminal()">GERİ DÖN [X]</button>
             </div>
+            <div id="log-box" class="term-content"></div>
+            <div class="term-input-line">
+                <span id="term-tag">root@vault:~$</span>
+                <textarea id="cmd-input" rows="1"></textarea>
+            </div>
+        </div>
 
-            <div id="terminal-win" class="window" style="width: 600px; height: 350px; bottom: 60px; left: 50px;">
-                <div class="window-header">💻 AppBee Pro Terminal</div>
-                <div id="log-box" class="window-body terminal-body">
-                    <div style="color: #0f0;">[SYSTEM READY] Çok satırlı mod aktif.</div>
-                </div>
-                <div class="terminal-input-area">
-                    <span id="term-tag">user@win8:~$</span>
-                    <textarea id="cmd-input" rows="1" placeholder="Komut yaz..."></textarea>
-                </div>
+        <div id="readme-win" class="window" style="display:none;">
+            <div class="window-header"><span>Not Defteri</span><button onclick="toggleReadme()">✖</button></div>
+            <div class="window-body notepad">
+                <b>VAULT OS v20.0</b><br><br>
+                - Adın tarayıcıya sonsuza dek kaydedildi.<br>
+                - Java Komutu: <i>System.out.println("Selam")</i><br>
+                - Terminale tıklayınca ekranı kaplar.
             </div>
         </div>
 
         <div id="taskbar">
-            <div class="start-btn-win8" onclick="powerOffVM()"></div>
-            <div class="taskbar-item active">Windows 8 Pro OS</div>
+            <div class="win-btn" onclick="powerOffVM()"></div>
             <div id="live-clock">00:00</div>
         </div>
     </div>
-
-    <div id="readme-win" class="window" style="display:none; width: 400px; top: 100px; left: 200px; z-index: 2000;">
-        <div class="window-header">📄 README.txt - Not Defteri <button onclick="closeWindow('readme-win')">✖</button></div>
-        <div class="window-body" style="background: white; color: black; font-family: 'Courier New';">
-            <h3>NASIL KULLANILIR?</h3>
-            <p>1. Terminale 'print' veya 'scan' yazabilirsin.</p>
-            <p>2. Çok satırlı terminalde Shift+Enter ile aşağı inebilirsin.</p>
-            <p>3. AppBee Önerisi: Her 30 dk'da bir 5 puan kazanırsın.</p>
-            <p>4. Sıralamada kalıcı olmak için Google ile girin.</p>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
