@@ -1,11 +1,13 @@
 let points = parseInt(localStorage.getItem('vaultPoints')) || 0;
 let currentUser = localStorage.getItem('vaultUser') || "";
 
-let botData = [{name: "Siber_Göz", score: 500}, {name: "Bot_Admin", score: 250}];
+let botData = [{name: "Siber_Göz", score: 450}, {name: "Kod_Ustadı", score: 200}];
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    if (currentUser !== "") showDesktop();
+ 
+    if (currentUser !== "") {
+        showDesktop();
+    }
     setupTerminal();
 });
 
@@ -61,7 +63,6 @@ function runCommand() {
 
     box.innerHTML += `<div><span style="color:#0f0">${currentUser}@vault:~$</span> ${text}</div>`;
 
-    
     if (text.toLowerCase().startsWith('system.out.println')) {
         const match = text.match(/\(([^)]+)\)/);
         const output = match ? match[1].replace(/['"]/g, '') : "Syntax Error: ; expected";
@@ -70,7 +71,7 @@ function runCommand() {
     else if (text.toLowerCase() === 'clear') {
         box.innerHTML = "";
     } else {
-        box.innerHTML += `<div style="color:#555;">Komut sistem tarafından işlendi.</div>`;
+        box.innerHTML += `<div style="color:#444;">Komut işlendi.</div>`;
     }
 
     input.value = "";
@@ -79,8 +80,9 @@ function runCommand() {
 
 function updateLeaderboard() {
     const list = document.getElementById('leader-list');
-   
+  
     let all = [...botData, { name: currentUser, score: points }].sort((a, b) => b.score - a.score);
+    
     list.innerHTML = all.map((u, i) => 
         `<li style="${u.name === currentUser ? 'color:#0f0; font-weight:bold;' : ''}">${i+1}. ${u.name} - ${u.score}</li>`
     ).join('');
@@ -97,14 +99,13 @@ function powerOffVM() {
     document.getElementById('desktop-bg').style.display = 'flex';
 }
 
-
 setInterval(() => {
     if(currentUser) {
         points += 10;
         localStorage.setItem('vaultPoints', points);
         updateLeaderboard();
     }
-}, 60000);
+}, 60000); 
 
 setInterval(() => {
     const clock = document.getElementById('live-clock');

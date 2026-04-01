@@ -2,16 +2,16 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE VAULT OS - v21.0</title>
+    <title>SECURE VAULT OS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="login-screen">
         <div class="login-container">
-            <h1 style="color: #00adef;">SİSTEME KAYIT</h1>
-            <p>Sıralama için adınızı girin:</p>
+            <h1>SİSTEME KAYIT</h1>
+            <p>Adınızı girin:</p>
             <input type="text" id="user-name-input" placeholder="Adınız..." autocomplete="off">
-            <button class="main-login-btn" onclick="saveUser()">KAYDET VE SİSTEMİ AÇ</button>
+            <button class="main-login-btn" onclick="saveUser()">KAYDET VE BAŞLAT</button>
         </div>
     </div>
 
@@ -38,15 +38,15 @@
         </div>
 
         <div class="leaderboard-panel">
-            <h3>🏆 LİDERLİK TABLOSU</h3>
+            <h3>🏆 LİDERLİK</h3>
             <ul id="leader-list"></ul>
             <div class="my-score">Puan: <span id="user-points">0</span></div>
         </div>
 
         <div id="terminal-fullscreen" style="display:none;">
             <div class="term-header">
-                <span>TERMINAL v3.0 - JAVA ENGINE</span>
-                <button onclick="closeFullTerminal()">GERİ DÖN [X]</button>
+                <span>TERMINAL v3.0</span>
+                <button onclick="closeFullTerminal()">KAPAT [X]</button>
             </div>
             <div id="log-box" class="term-content"></div>
             <div class="term-input-line">
@@ -56,12 +56,11 @@
         </div>
 
         <div id="readme-win" class="window" style="display:none;">
-            <div class="window-header"><span>Not Defteri</span><button onclick="toggleReadme()">✖</button></div>
+            <div class="window-header"><span>README</span><button onclick="toggleReadme()">✖</button></div>
             <div class="window-body notepad">
-                <b>VAULT OS v21.0</b><br><br>
-                - Arka plana o efsane dağ fotoğrafı eklendi.<br>
-                - Terminal ikonu sade ve havalı metin yapıldı.<br>
-                - Java Komutu: <i>System.out.println("Selam")</i>
+                <b>VAULT OS v22.0</b><br><br>
+                - Arka plan dağ mühürlendi.<br>
+                - İsim sonsuza dek kaydedildi.
             </div>
         </div>
 
