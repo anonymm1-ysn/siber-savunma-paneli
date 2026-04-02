@@ -2,53 +2,116 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>VAULT OS Win 8 - Blue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAULT OS Pro - Ahmet YSS</title>
+    <!-- CSS Dosyasını Bağlıyoruz -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
- 
+
+    <!-- GİRİŞ EKRANI -->
     <div id="login-screen">
-        <div class="login-container">
-            <h1 style="color:#0078d7">VAULT LOGIN</h1>
-            <input type="text" id="user-name-input" placeholder="Kullanıcı Adı..." autocomplete="off" style="width:100%; padding:10px; margin:15px 0;">
-            <button onclick="saveUser()" style="width:100%; padding:10px; background:#0078d7; color:white; border:none; cursor:pointer;">GİRİŞ YAP</button>
-            <p onclick="alert('Yapımcı: AHMET YSS')" style="font-size:10px; color:#444; margin-top:10px; cursor:pointer;">Powered by AHMET YSS</p>
+        <div class="login-box">
+            <h2>VAULT LOGIN</h2>
+            <input type="text" id="user-input" placeholder="ID Giriniz..." autocomplete="off">
+            <button onclick="doLogin()">SİSTEMİ AÇ</button>
         </div>
     </div>
 
-   
+    <!-- MAVİ ŞERİTLİ HAZIRLIK ALANI -->
     <div id="prep-area">
-        <div class="prep-controls">
-            <h1 style="margin:0">Hoş Geldin, <span id="user-display"></span></h1>
-            <p style="opacity:0.7">Sanal makine başlatılmaya hazır.</p>
-            <button onclick="bootVM()" style="padding:15px 40px; background:#0078d7; color:white; border:none; font-weight:bold; cursor:pointer; font-size:16px;">TERMINALE BAŞLA</button>
+        <div class="prep-card">
+            <h1>Hoş Geldin, <span id="display-name"></span></h1>
+            <p>Sanal makine konfigüre ediliyor...</p>
+            <button onclick="startOS()">TERMINALE BAŞLA</button>
         </div>
     </div>
 
-   
+    <!-- MASAÜSTÜ -->
     <div id="vm-desktop">
-        <div class="desktop-icons">
-            <div class="app-icon" onclick="openApp('win-terminal')"><img src="https://cdn-icons-png.flaticon.com/512/906/906336.png"><span>Terminal</span></div>
-            <div class="app-icon" onclick="openApp('win-chrome')"><img src="https://cdn-icons-png.flaticon.com/512/888/888846.png"><span>Chrome</span></div>
-            <div class="app-icon" onclick="openApp('win-paint')"><img src="https://cdn-icons-png.flaticon.com/512/588/588395.png"><span>Paint</span></div>
-            <div class="app-icon" onclick="openApp('win-readme')"><img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png"><span>Readme.txt</span></div>
+        <div class="icons-grid">
+            <div class="icon" onclick="showApp('win-terminal')">
+                <img src="https://cdn-icons-png.flaticon.com/512/906/906336.png">
+                <span>Terminal</span>
+            </div>
+            <div class="icon" onclick="showApp('win-chrome')">
+                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png">
+                <span>Chrome</span>
+            </div>
+            <div class="icon" onclick="showApp('win-paint')">
+                <img src="https://cdn-icons-png.flaticon.com/512/588/588395.png">
+                <span>Paint</span>
+            </div>
+            <div class="icon" onclick="showApp('win-readme')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png">
+                <span>Readme.txt</span>
+            </div>
         </div>
 
-        
-        <div id="win-terminal" class="window"><div class="win-header"><b>Terminal</b><button class="win-close" onclick="closeApp('win-terminal')">×</button></div><div class="win-body" style="background:#000; height:350px; padding:15px; color:#0f0; font-family:monospace;"><div id="log-box"></div><div style="display:flex"><span id="term-tag"></span><input type="text" id="cmd-input" style="background:transparent; border:none; color:#fff; outline:none; flex-grow:1;"></div></div></div>
-        
-        <div id="win-chrome" class="window"><div class="win-header"><b>Chrome</b><button class="win-close" onclick="closeApp('win-chrome')">×</button></div><div class="win-body" style="height:350px; display:flex; align-items:center; justify-content:center;"><h3>www.google.com</h3></div></div>
-        
-        <div id="win-paint" class="window"><div class="win-header"><b>Paint</b><button class="win-close" onclick="closeApp('win-paint')">×</button></div><div class="win-body" style="height:300px;"><canvas id="paint-canvas" width="500" height="300"></canvas></div></div>
-        
-        <div id="win-readme" class="window"><div class="win-header"><b>Readme.txt</b><button class="win-close" onclick="closeApp('win-readme')">×</button></div><div class="win-body" style="padding:20px; color:#333;"><b>VAULT OS v27</b><br>Geliştirici: AHMET YSS<br><br>Komut: system.out.println("Merhaba")</div></div>
+        <!-- APP: CHROME -->
+        <div id="win-chrome" class="window">
+            <div class="win-header">
+                <b>Google Chrome</b>
+                <button class="win-close" onclick="hideApp('win-chrome')">×</button>
+            </div>
+            <div class="chrome-nav">
+                <input type="text" id="url-bar" value="https://www.wikipedia.org">
+                <button onclick="goUrl()">GİT</button>
+            </div>
+            <div class="win-body">
+                <iframe id="browser-frame" src="https://www.wikipedia.org"></iframe>
+            </div>
+        </div>
 
+        <!-- APP: TERMINAL -->
+        <div id="win-terminal" class="window">
+            <div class="win-header">
+                <b>Terminal</b>
+                <button class="win-close" onclick="hideApp('win-terminal')">×</button>
+            </div>
+            <div class="win-body terminal-bg">
+                <div id="terminal-out"></div>
+                <div class="terminal-input-line">
+                    <span id="prompt-tag"></span>
+                    <input type="text" id="terminal-in">
+                </div>
+            </div>
+        </div>
+
+        <!-- APP: PAINT -->
+        <div id="win-paint" class="window">
+            <div class="win-header">
+                <b>Paint Pro</b>
+                <button class="win-close" onclick="hideApp('win-paint')">×</button>
+            </div>
+            <div class="win-body">
+                <canvas id="paint-box" width="800" height="500"></canvas>
+            </div>
+        </div>
+
+        <!-- APP: README -->
+        <div id="win-readme" class="window">
+            <div class="win-header">
+                <b>Readme.txt</b>
+                <button class="win-close" onclick="hideApp('win-readme')">×</button>
+            </div>
+            <div class="win-body readme-padding">
+                <h3>VAULT OS PRO v27.5</h3>
+                <p>Geliştirici: <b>AHMET YSS</b></p>
+                <hr>
+                <p>Mavi şeritli arayüz aktif edildi.</p>
+                <p>Chrome ve Terminal senkronize çalışıyor.</p>
+            </div>
+        </div>
+
+        <!-- TASKBAR -->
         <div class="taskbar">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png" class="start-logo">
-            <span id="live-time" class="time">00:00</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png" class="win-logo">
+            <span id="os-clock" class="clock">00:00</span>
         </div>
     </div>
 
+    <!-- JS Dosyasını Bağlıyoruz -->
     <script src="script.js"></script>
 </body>
 </html>

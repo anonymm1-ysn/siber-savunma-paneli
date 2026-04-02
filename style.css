@@ -1,49 +1,97 @@
 :root {
     --win8-blue: #0078d7;
-    
     --win8-bg: linear-gradient(135deg, #004a7c 0%, #005a9e 50%, #0078d7 100%);
 }
 
-body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; background: #000; }
-
-
-#login-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; color: #fff; }
-.login-container { background: #050505; padding: 40px; border-radius: 5px; border: 2px solid var(--win8-blue); width: 350px; text-align: center; }
-
-
-#prep-area { 
-    position: fixed; inset: 0; 
-    background: var(--win8-bg); 
-    z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center;
+body, html { 
+    margin: 0; padding: 0; height: 100%; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    overflow: hidden; background: #000; 
 }
 
+/* GİRİŞ EKRANI */
+#login-screen { 
+    position: fixed; inset: 0; background: #000; z-index: 10000; 
+    display: flex; align-items: center; justify-content: center; color: #fff; 
+}
+.login-box { 
+    background: #050505; padding: 40px; border: 2px solid var(--win8-blue); 
+    width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0,120,215,0.4); 
+}
+#user-input { 
+    width: 100%; padding: 12px; margin: 15px 0; background: #111; 
+    border: 1px solid #444; color: #fff; outline: none; box-sizing: border-box; 
+}
+.login-box button { 
+    width: 100%; padding: 10px; background: var(--win8-blue); 
+    color: white; border: none; cursor: pointer; font-weight: bold; 
+}
+
+/* MAVİ ŞERİTLİ HAZIRLIK ALANI */
+#prep-area { 
+    position: fixed; inset: 0; background: var(--win8-bg); 
+    z-index: 5000; display: none; flex-direction: column; 
+    align-items: center; justify-content: center; 
+}
 #prep-area::after {
     content: ""; position: absolute; inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.05) 100px, rgba(255,255,255,0.05) 200px);
-    pointer-events: none;
+    background: repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.03) 100px, rgba(255,255,255,0.03) 200px);
 }
-
-.prep-controls { background: rgba(0,0,0,0.5); padding: 40px; border-radius: 5px; backdrop-filter: blur(10px); text-align: center; color: white; border: 1px solid rgba(255,255,255,0.1); z-index: 1; }
-
-
-#vm-desktop { 
-    position: fixed; inset: 0; 
-    background: #004a7c; 
-    z-index: 6000; display: none; flex-direction: column; 
+.prep-card { 
+    background: rgba(0,0,0,0.4); padding: 50px; border-radius: 5px; 
+    backdrop-filter: blur(10px); text-align: center; color: white; 
+    z-index: 10; border: 1px solid rgba(255,255,255,0.1); 
 }
+.prep-card button { 
+    padding: 15px 40px; background: white; color: #004a7c; 
+    border: none; font-weight: bold; cursor: pointer; 
+    font-size: 18px; border-radius: 30px; transition: 0.3s; 
+}
+.prep-card button:hover { transform: scale(1.05); }
 
+/* MASAÜSTÜ VE İKONLAR */
+#vm-desktop { position: fixed; inset: 0; background: #004a7c; z-index: 6000; display: none; flex-direction: column; }
+.icons-grid { padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, 90px); gap: 20px; }
+.icon { 
+    width: 85px; display: flex; flex-direction: column; align-items: center; 
+    cursor: pointer; color: white; font-size: 11px; text-shadow: 1px 1px 2px #000; 
+}
+.icon img { width: 48px; height: 48px; margin-bottom: 5px; transition: 0.2s; }
+.icon:hover img { transform: scale(1.1); }
 
-.desktop-icons { padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, 90px); gap: 20px; flex-grow: 1; align-content: start; }
-.app-icon { width: 85px; display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; font-size: 11px; text-align: center; }
-.app-icon img { width: 48px; height: 48px; margin-bottom: 5px; }
-
-.window { position: absolute; top: 80px; left: 150px; background: #fff; min-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); border: 1px solid #777; display: none; flex-direction: column; z-index: 7000; border-radius: 2px; }
-.win-header { background: #f0f0f0; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; }
+/* PENCERELER */
+.window { 
+    position: absolute; top: 60px; left: 100px; background: #fff; 
+    width: 600px; height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    display: none; flex-direction: column; z-index: 7000; border-radius: 3px; 
+    overflow: hidden; resize: both; 
+}
+.win-header { 
+    background: #f0f0f0; padding: 10px; display: flex; 
+    justify-content: space-between; align-items: center; 
+    border-bottom: 1px solid #ccc; cursor: move; 
+}
 .win-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #555; }
 .win-close:hover { color: #e81123; }
-.win-body { flex-grow: 1; overflow: auto; }
+.win-body { flex-grow: 1; overflow: auto; position: relative; }
 
+/* CHROME ÖZEL */
+.chrome-nav { background:#f1f3f4; padding:8px; display:flex; gap:10px; border-bottom: 1px solid #ccc; }
+#url-bar { flex-grow:1; border-radius:20px; border:1px solid #ccc; padding:5px 15px; outline:none; }
+#browser-frame { width:100%; height:100%; border:none; background:#fff; }
 
-.taskbar { height: 40px; background: rgba(0,0,0,0.9); display: flex; align-items: center; padding: 0 15px; color: white; z-index: 8000; }
-.start-logo { width: 20px; filter: invert(1); margin-right: 15px; }
-.time { margin-left: auto; font-family: monospace; }
+/* TERMINAL ÖZEL */
+.terminal-bg { background: #000; padding: 10px; color: #0f0; font-family: 'Consolas', monospace; }
+.terminal-input-line { display: flex; margin-top: 5px; align-items: center; }
+#terminal-in { background: transparent; border: none; color: #fff; outline: none; flex-grow: 1; font-family: inherit; }
+
+/* README ÖZEL */
+.readme-padding { padding: 25px; color: #333; line-height: 1.5; }
+
+/* TASKBAR */
+.taskbar { height: 40px; background: rgba(0,0,0,0.9); display: flex; align-items: center; padding: 0 15px; color: white; z-index: 8000; margin-top: auto; }
+.win-logo { width: 20px; filter: invert(1); margin-right: 15px; }
+.clock { margin-left: auto; font-family: monospace; }
+
+/* PAINT ÖZEL */
+#paint-box { background: #fff; cursor: crosshair; }
