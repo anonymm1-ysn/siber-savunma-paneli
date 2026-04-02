@@ -1,14 +1,9 @@
-let points = parseInt(localStorage.getItem('vaultPoints')) || 0;
 let currentUser = localStorage.getItem('vaultUser') || "";
-
-let allUsers = JSON.parse(localStorage.getItem('allVaultUsers')) || [
-    {name: "Siber_Göz", score: 500}, 
-    {name: "Kod_Dostu", score: 250}
-];
 
 document.addEventListener('DOMContentLoaded', () => {
     if (currentUser !== "") showPrepArea();
     setupTerminal();
+    setupPaint();
 });
 
 function saveUser() {
@@ -16,12 +11,6 @@ function saveUser() {
     if(name.length > 1) {
         currentUser = name;
         localStorage.setItem('vaultUser', currentUser);
-        
-   
-        if (!allUsers.find(u => u.name === name)) {
-            allUsers.push({name: name, score: points});
-            localStorage.setItem('allVaultUsers', JSON.stringify(allUsers));
-        }
         showPrepArea();
     }
 }
@@ -30,57 +19,47 @@ function showPrepArea() {
     document.getElementById('login-screen').style.display = "none";
     document.getElementById('prep-area').style.display = "flex";
     document.getElementById('user-display').innerText = currentUser;
-    updateLeaders();
 }
 
 function bootVM() {
-   
     document.getElementById('prep-area').style.display = "none";
-    document.getElementById('vm-fullscreen').style.display = "block";
+    document.getElementById('vm-desktop').style.display = "flex";
     document.getElementById('term-tag').innerText = currentUser + "@vault:~$ ";
-    document.getElementById('cmd-input').focus();
+    openApp('win-readme'); // Açılışta Readme gelsin
 }
 
-function updateLeaders() {
-    const list = document.getElementById('leader-list');
-   
-    let me = allUsers.find(u => u.name === currentUser);
-    if(me) me.score = points;
-
-    let sorted = allUsers.sort((a, b) => b.score - a.score);
-    list.innerHTML = sorted.map((u, i) => 
-        `<li style="${u.name === currentUser ? 'color:#0f0' : ''}">${i+1}. ${u.name} - ${u.score}</li>`
-    ).join('');
-}
-
-function toggleLeaders() {
-    const win = document.getElementById('leaderboard-win');
-    win.style.display = win.style.display === 'none' ? 'block' : 'none';
-}
+function openApp(id) { document.getElementById(id).style.display = 'flex'; }
+function closeApp(id) { document.getElementById(id).style.display = 'none'; }
 
 function setupTerminal() {
     document.getElementById('cmd-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            const input = e.target.value;
+            const val = e.target.value;
             const log = document.getElementById('log-box');
-            log.innerHTML += `<div><span style="color:#0f0">${currentUser}@vault:~$</span> ${input}</div>`;
-          
-            if(input.toLowerCase().includes('system.out.println')) {
-                log.innerHTML += `<div style="color:#f89820"> [Output]: Başarıyla çalıştırıldı.</div>`;
+            log.innerHTML += `<div><span style="color:#0f0">${currentUser}@vault:~$</span> ${val}</div>`;
+            if(val.toLowerCase().startsWith('system.out.println')) {
+                const msg = val.match(/\(([^)]+)\)/)?.[1].replace(/['"]/g, '') || "Error";
+                log.innerHTML += `<div style="color:#f89820">[Java]: ${msg}</div>`;
             }
-
             e.target.value = "";
             log.scrollTop = log.scrollHeight;
         }
     });
 }
 
+function setupPaint() {
+    const canvas = document.getElementById('paint-canvas');
+    const ctx = canvas.getContext('2d');
+    let painting = false;
+    canvas.onmousedown = () => painting = true;
+    canvas.onmouseup = () => { painting = false; ctx.beginPath(); };
+    canvas.onmousemove = (e) => {
+        if (!painting) return;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    };
+}
 
 setInterval(() => {
-    if(currentUser) {
-        points += 5;
-        localStorage.setItem('vaultPoints', points);
-        localStorage.setItem('allVaultUsers', JSON.stringify(allUsers));
-        updateLeaders();
-    }
-}, 30000);
+    document.getElementById('live-time').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}, 1000);

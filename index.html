@@ -2,45 +2,50 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>VAULT OS v24.0</title>
+    <title>VAULT OS Win 8 - Blue</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-   
+ 
     <div id="login-screen">
         <div class="login-container">
-            <h1>HOŞ GELDİNİZ</h1>
-            <input type="text" id="user-name-input" placeholder="Adınızı girin..." autocomplete="off">
-            <button class="main-login-btn" onclick="saveUser()">BAŞLA</button>
-            <div class="credits" onclick="alert('Yapımcı: AHMETYSS')">Kim tarafından yapıldı?</div>
+            <h1 style="color:#0078d7">VAULT LOGIN</h1>
+            <input type="text" id="user-name-input" placeholder="Kullanıcı Adı..." autocomplete="off" style="width:100%; padding:10px; margin:15px 0;">
+            <button onclick="saveUser()" style="width:100%; padding:10px; background:#0078d7; color:white; border:none; cursor:pointer;">GİRİŞ YAP</button>
+            <p onclick="alert('Yapımcı: AHMET YSS')" style="font-size:10px; color:#444; margin-top:10px; cursor:pointer;">Powered by AHMET YSS</p>
         </div>
     </div>
 
    
     <div id="prep-area">
-        <div class="knight-visual">⚔️</div>
         <div class="prep-controls">
-            <h2 style="color:white">Sistem Hazır, <span id="user-display"></span></h2>
-            <button class="blue-start-btn" onclick="bootVM()">TERMINALE BAŞLA</button>
-            <button class="leader-btn" onclick="toggleLeaders()">LEADERBOARD</button>
-        </div>
-
-        <div id="leaderboard-win" style="display:none;">
-            <h3>🏆 SIRALAMA</h3>
-            <ul id="leader-list" style="list-style:none; padding:0;"></ul>
-            <button onclick="toggleLeaders()" style="width:100%">KAPAT</button>
+            <h1 style="margin:0">Hoş Geldin, <span id="user-display"></span></h1>
+            <p style="opacity:0.7">Sanal makine başlatılmaya hazır.</p>
+            <button onclick="bootVM()" style="padding:15px 40px; background:#0078d7; color:white; border:none; font-weight:bold; cursor:pointer; font-size:16px;">TERMINALE BAŞLA</button>
         </div>
     </div>
 
+   
+    <div id="vm-desktop">
+        <div class="desktop-icons">
+            <div class="app-icon" onclick="openApp('win-terminal')"><img src="https://cdn-icons-png.flaticon.com/512/906/906336.png"><span>Terminal</span></div>
+            <div class="app-icon" onclick="openApp('win-chrome')"><img src="https://cdn-icons-png.flaticon.com/512/888/888846.png"><span>Chrome</span></div>
+            <div class="app-icon" onclick="openApp('win-paint')"><img src="https://cdn-icons-png.flaticon.com/512/588/588395.png"><span>Paint</span></div>
+            <div class="app-icon" onclick="openApp('win-readme')"><img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png"><span>Readme.txt</span></div>
+        </div>
 
-    <div id="vm-fullscreen">
-        <div id="terminal-area">
-            <div style="color:#00adef; margin-bottom:10px;">WINDOWS 8 PRO - VIRTUAL KERNEL v3.0</div>
-            <div id="log-box" class="term-content"></div>
-            <div style="display:flex">
-                <span id="term-tag" style="color:#0f0"></span>
-                <input type="text" id="cmd-input">
-            </div>
+        
+        <div id="win-terminal" class="window"><div class="win-header"><b>Terminal</b><button class="win-close" onclick="closeApp('win-terminal')">×</button></div><div class="win-body" style="background:#000; height:350px; padding:15px; color:#0f0; font-family:monospace;"><div id="log-box"></div><div style="display:flex"><span id="term-tag"></span><input type="text" id="cmd-input" style="background:transparent; border:none; color:#fff; outline:none; flex-grow:1;"></div></div></div>
+        
+        <div id="win-chrome" class="window"><div class="win-header"><b>Chrome</b><button class="win-close" onclick="closeApp('win-chrome')">×</button></div><div class="win-body" style="height:350px; display:flex; align-items:center; justify-content:center;"><h3>www.google.com</h3></div></div>
+        
+        <div id="win-paint" class="window"><div class="win-header"><b>Paint</b><button class="win-close" onclick="closeApp('win-paint')">×</button></div><div class="win-body" style="height:300px;"><canvas id="paint-canvas" width="500" height="300"></canvas></div></div>
+        
+        <div id="win-readme" class="window"><div class="win-header"><b>Readme.txt</b><button class="win-close" onclick="closeApp('win-readme')">×</button></div><div class="win-body" style="padding:20px; color:#333;"><b>VAULT OS v27</b><br>Geliştirici: AHMET YSS<br><br>Komut: system.out.println("Merhaba")</div></div>
+
+        <div class="taskbar">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png" class="start-logo">
+            <span id="live-time" class="time">00:00</span>
         </div>
     </div>
 
