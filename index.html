@@ -2,73 +2,48 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE VAULT OS</title>
+    <title>VAULT OS v24.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+   
     <div id="login-screen">
         <div class="login-container">
-            <h1>SİSTEME KAYIT</h1>
-            <p>Adınızı girin:</p>
-            <input type="text" id="user-name-input" placeholder="Adınız..." autocomplete="off">
-            <button class="main-login-btn" onclick="saveUser()">KAYDET VE BAŞLAT</button>
+            <h1>HOŞ GELDİNİZ</h1>
+            <input type="text" id="user-name-input" placeholder="Adınızı girin..." autocomplete="off">
+            <button class="main-login-btn" onclick="saveUser()">BAŞLA</button>
+            <div class="credits" onclick="alert('Yapımcı: AHMETYSS')">Kim tarafından yapıldı?</div>
         </div>
     </div>
 
-    <div id="desktop-bg" style="display:none;">
-        <div class="start-overlay">
-            <h1>Hoş Geldin, <span id="welcome-name"></span></h1>
-            <div class="win8-start-tile" onclick="startVirtualMachine()">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png">
-                <span>Windows 8 Pro</span>
-            </div>
+   
+    <div id="prep-area">
+        <div class="knight-visual">⚔️</div>
+        <div class="prep-controls">
+            <h2 style="color:white">Sistem Hazır, <span id="user-display"></span></h2>
+            <button class="blue-start-btn" onclick="bootVM()">TERMINALE BAŞLA</button>
+            <button class="leader-btn" onclick="toggleLeaders()">LEADERBOARD</button>
+        </div>
+
+        <div id="leaderboard-win" style="display:none;">
+            <h3>🏆 SIRALAMA</h3>
+            <ul id="leader-list" style="list-style:none; padding:0;"></ul>
+            <button onclick="toggleLeaders()" style="width:100%">KAPAT</button>
         </div>
     </div>
 
-    <div id="vm-fullscreen" style="display:none;">
-        <div class="desktop-icons">
-            <div class="icon-text" onclick="openFullTerminal()">
-                <div class="text-logo">TERMINAL</div>
-                <span>Terminal</span>
-            </div>
-            <div class="icon" onclick="toggleReadme()">
-                <img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png">
-                <span>README.txt</span>
-            </div>
-        </div>
 
-        <div class="leaderboard-panel">
-            <h3>🏆 LİDERLİK</h3>
-            <ul id="leader-list"></ul>
-            <div class="my-score">Puan: <span id="user-points">0</span></div>
-        </div>
-
-        <div id="terminal-fullscreen" style="display:none;">
-            <div class="term-header">
-                <span>TERMINAL v3.0</span>
-                <button onclick="closeFullTerminal()">KAPAT [X]</button>
-            </div>
+    <div id="vm-fullscreen">
+        <div id="terminal-area">
+            <div style="color:#00adef; margin-bottom:10px;">WINDOWS 8 PRO - VIRTUAL KERNEL v3.0</div>
             <div id="log-box" class="term-content"></div>
-            <div class="term-input-line">
-                <span id="term-tag">root@vault:~$</span>
-                <textarea id="cmd-input" rows="1"></textarea>
+            <div style="display:flex">
+                <span id="term-tag" style="color:#0f0"></span>
+                <input type="text" id="cmd-input">
             </div>
-        </div>
-
-        <div id="readme-win" class="window" style="display:none;">
-            <div class="window-header"><span>README</span><button onclick="toggleReadme()">✖</button></div>
-            <div class="window-body notepad">
-                <b>VAULT OS v22.0</b><br><br>
-                - burası istediğiniz gibi kod yazabilecegınız bir bedava uygulama.<br>
-                - İsim sonsuza dek kaydedildi.
-            </div>
-        </div>
-
-        <div id="taskbar">
-            <div class="win-btn" onclick="powerOffVM()"></div>
-            <div id="live-clock">00:00</div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
