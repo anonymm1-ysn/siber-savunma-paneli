@@ -3,115 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAULT OS Pro - Ahmet YSS</title>
-    <!-- CSS Dosyasını Bağlıyoruz -->
+    <title>Foxy - Sanal Pet</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANI -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>VAULT LOGIN</h2>
-            <input type="text" id="user-input" placeholder="ID Giriniz..." autocomplete="off">
-            <button onclick="doLogin()">SİSTEMİ AÇ</button>
+    <div id="foxy-container">
+        <div id="speech-bubble">Merhaba Ahmet!</div>
+        <img id="foxy-img" src="foxy.png" alt="Foxy" draggable="false">
+    </div>
+
+    <div class="control-panel">
+        <div class="stats">
+            <div class="stat-item">Açlık: <span id="hunger-val">100</span>%</div>
+            <div class="stat-item">Susuzluk: <span id="thirst-val">100</span>%</div>
+            <div class="stat-item">Enerji: <span id="energy-val">100</span>%</div>
+            <div class="stat-item">Temizlik: <span id="clean-val">100</span>%</div>
+        </div>
+        <div class="actions">
+            <button onclick="feedFoxy()">🍖 Yemek Ver</button>
+            <button onclick="waterFoxy()">💧 Su Ver</button>
+            <button onclick="petFoxy()">✋ Sev</button>
+            <button onclick="washFoxy()">🧽 Yıka</button>
         </div>
     </div>
 
-    <!-- MAVİ ŞERİTLİ HAZIRLIK ALANI -->
-    <div id="prep-area">
-        <div class="prep-card">
-            <h1>Hoş Geldin, <span id="display-name"></span></h1>
-            <p>Sanal makine konfigüre ediliyor...</p>
-            <button onclick="startOS()">TERMINALE BAŞLA</button>
-        </div>
-    </div>
-
-    <!-- MASAÜSTÜ -->
-    <div id="vm-desktop">
-        <div class="icons-grid">
-            <div class="icon" onclick="showApp('win-terminal')">
-                <img src="https://cdn-icons-png.flaticon.com/512/906/906336.png">
-                <span>Terminal</span>
-            </div>
-            <div class="icon" onclick="showApp('win-chrome')">
-                <img src="https://cdn-icons-png.flaticon.com/512/888/888846.png">
-                <span>Chrome</span>
-            </div>
-            <div class="icon" onclick="showApp('win-paint')">
-                <img src="https://cdn-icons-png.flaticon.com/512/588/588395.png">
-                <span>Paint</span>
-            </div>
-            <div class="icon" onclick="showApp('win-readme')">
-                <img src="https://cdn-icons-png.flaticon.com/512/2965/2965335.png">
-                <span>Readme.txt</span>
-            </div>
-        </div>
-
-        <!-- APP: CHROME -->
-        <div id="win-chrome" class="window">
-            <div class="win-header">
-                <b>Google Chrome</b>
-                <button class="win-close" onclick="hideApp('win-chrome')">×</button>
-            </div>
-            <div class="chrome-nav">
-                <input type="text" id="url-bar" value="https://www.wikipedia.org">
-                <button onclick="goUrl()">GİT</button>
-            </div>
-            <div class="win-body">
-                <iframe id="browser-frame" src="https://www.wikipedia.org"></iframe>
-            </div>
-        </div>
-
-        <!-- APP: TERMINAL -->
-        <div id="win-terminal" class="window">
-            <div class="win-header">
-                <b>Terminal</b>
-                <button class="win-close" onclick="hideApp('win-terminal')">×</button>
-            </div>
-            <div class="win-body terminal-bg">
-                <div id="terminal-out"></div>
-                <div class="terminal-input-line">
-                    <span id="prompt-tag"></span>
-                    <input type="text" id="terminal-in">
-                </div>
-            </div>
-        </div>
-
-        <!-- APP: PAINT -->
-        <div id="win-paint" class="window">
-            <div class="win-header">
-                <b>Paint Pro</b>
-                <button class="win-close" onclick="hideApp('win-paint')">×</button>
-            </div>
-            <div class="win-body">
-                <canvas id="paint-box" width="800" height="500"></canvas>
-            </div>
-        </div>
-
-        <!-- APP: README -->
-        <div id="win-readme" class="window">
-            <div class="win-header">
-                <b>Readme.txt</b>
-                <button class="win-close" onclick="hideApp('win-readme')">×</button>
-            </div>
-            <div class="win-body readme-padding">
-                <h3>VAULT OS PRO v27.5</h3>
-                <p>Geliştirici: <b>AHMET YSS</b></p>
-                <hr>
-                <p>Mavi şeritli arayüz aktif edildi.</p>
-                <p>Chrome ve Terminal senkronize çalışıyor.</p>
-            </div>
-        </div>
-
-        <!-- TASKBAR -->
-        <div class="taskbar">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/1024px-Windows_logo_-_2012.svg.png" class="win-logo">
-            <span id="os-clock" class="clock">00:00</span>
-        </div>
-    </div>
-
-    <!-- JS Dosyasını Bağlıyoruz -->
     <script src="script.js"></script>
 </body>
 </html>
