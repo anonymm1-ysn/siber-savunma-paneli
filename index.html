@@ -3,16 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foxy - Sanal Pet</title>
+    <title>Foxzy ProLab v3.0</title>
+    <!-- CSS Dosyasını Bağlıyoruz -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="foxy-container">
-        <div id="speech-bubble">Merhaba Ahmet!</div>
-        <img id="foxy-img" src="foxy.png" alt="Foxy" draggable="false">
+    <!-- Yükleme Ekranı -->
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <h3>Foxzy ProLab v3.0 Yükleniyor...</h3>
+        <p>Sistem bileşenleri hazırlanıyor...</p>
     </div>
 
+    <!-- Foxy Karakteri (CSS ile Çizildi) -->
+    <div id="foxy-container">
+        <div id="speech-bubble">Merhaba Ahmet!</div>
+        
+        <div class="foxy-body">
+            <div class="foxy-ear left"><div class="foxy-ear-inner"></div></div>
+            <div class="foxy-ear right"><div class="foxy-ear-inner"></div></div>
+            <div class="foxy-face">
+                <div class="foxy-eye left"></div>
+                <div class="foxy-eye right"></div>
+                <div class="foxy-nose"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontrol Paneli -->
     <div class="control-panel">
         <div class="stats">
             <div class="stat-item">Açlık: <span id="hunger-val">100</span>%</div>
@@ -21,13 +40,14 @@
             <div class="stat-item">Temizlik: <span id="clean-val">100</span>%</div>
         </div>
         <div class="actions">
-            <button onclick="feedFoxy()">🍖 Yemek Ver</button>
-            <button onclick="waterFoxy()">💧 Su Ver</button>
+            <button onclick="feedFoxy()">🍖 Yemek</button>
+            <button onclick="waterFoxy()">💧 Su</button>
             <button onclick="petFoxy()">✋ Sev</button>
             <button onclick="washFoxy()">🧽 Yıka</button>
         </div>
     </div>
 
+    <!-- JavaScript Dosyasını Bağlıyoruz -->
     <script src="script.js"></script>
 </body>
 </html>

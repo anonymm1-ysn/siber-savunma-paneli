@@ -1,84 +1,116 @@
+
 body, html {
     margin: 0; padding: 0; height: 100%;
-    overflow: hidden; /* Tilki ekrandan kaçmasın */
-    background: #f0f0f0; /* Açık gri arka plan */
+    overflow: hidden;
+    background: #e0e0e0;
     font-family: 'Segoe UI', sans-serif;
+    user-select: none;
 }
 
-/* FOXZY KONTEYNERİ (Fareyle Tutulan Alan) */
+/* YÜKLEME EKRANI */
+#loading-screen {
+    position: fixed; inset: 0;
+    background: #FF6B6B;
+    color: white; z-index: 10000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.5s;
+}
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid white;
+    border-radius: 50%; width: 50px; height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* FOXY TASARIMI */
 #foxy-container {
     position: absolute;
-    width: 120px; /* Tilkinin boyutu */
-    cursor: grab; /* Tutulabilir fare imleci */
-    z-index: 1000;
-    transition: transform 0.1s ease; /* Pürüzsüz hareket */
-    text-align: center;
+    width: 120px; height: 150px;
+    cursor: grab; z-index: 1000;
 }
 
-#foxy-container:active {
-    cursor: grabbing; /* Tutulurken imleç değişir */
-    transform: scale(1.1); /* Tutulurken biraz büyür */
-}
-
-#foxy-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    /* Normal Zıplama Animasyonu */
+.foxy-body {
+    position: relative; width: 100%; height: 120px;
+    background: #FF6B6B;
+    border-radius: 60px 60px 30px 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     animation: foxy-bounce 1s ease-in-out infinite;
-    transform-origin: bottom center;
 }
 
-/* --- ANİMASYONLAR --- */
+.foxy-face {
+    position: absolute; bottom: -5px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 55px;
+    background: white; border-radius: 50px 50px 0 0;
+}
 
-/* Normal Zıplama */
+.foxy-eye {
+    position: absolute; top: 22px;
+    width: 12px; height: 16px;
+    background: #222; border-radius: 50%;
+}
+.foxy-eye.left { left: 28px; }
+.foxy-eye.right { right: 28px; }
+
+.foxy-nose {
+    position: absolute; bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 6px;
+    background: black; border-radius: 50%;
+}
+
+.foxy-ear {
+    position: absolute; top: -12px;
+    width: 0; height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid #FF6B6B;
+}
+.foxy-ear.left { left: 8px; transform: rotate(-15deg); }
+.foxy-ear.right { right: 8px; transform: rotate(15deg); }
+
+/* ANİMASYONLAR */
 @keyframes foxy-bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+    50% { transform: translateY(-20px); }
 }
 
-/* Yan Yatıp Uyuma (Enerji bitince) */
-.sleeping #foxy-img {
-    animation: none; /* Zıplamayı durdur */
-    transform: rotate(90deg) translateY(30px); 
-    filter: grayscale(0.5); /
+.sleeping .foxy-body {
+    animation: none;
+    transform: rotate(90deg) translateX(40px);
+    filter: grayscale(0.6);
 }
 
-
-.happy #foxy-img {
-    animation: foxy-wiggle 0.5s ease infinite;
+.happy .foxy-body {
+    animation: foxy-wiggle 0.4s ease infinite;
 }
 @keyframes foxy-wiggle {
     0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(10deg); }
-    75% { transform: rotate(-10deg); }
+    25% { transform: rotate(8deg); }
+    75% { transform: rotate(-8deg); }
 }
 
-
+/* PANEL VE KONUŞMA */
 #speech-bubble {
-    background: white; border-radius: 10px;
-    padding: 8px 12px; font-size: 12px;
+    background: white; border-radius: 12px;
+    padding: 10px; font-size: 13px;
     position: absolute; bottom: 100%; left: 50%;
-    transform: translateX(-50%); margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateX(-50%); margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     opacity: 0; transition: opacity 0.3s;
-    white-space: nowrap; pointer-events: none;
 }
-
 
 .control-panel {
     position: fixed; bottom: 20px; right: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 15px; border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    z-index: 2000; width: 220px;
+    background: white; padding: 15px; border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 180px;
 }
-.stats { font-size: 12px; margin-bottom: 10px; color: #333; }
-.stat-item { margin-bottom: 4px; font-weight: bold; }
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-item { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
 .actions button {
-    padding: 8px; border: none; border-radius: 5px;
-    background: #FF6B6B; color: white; cursor: pointer;
-    font-size: 12px; font-weight: bold; transition: background 0.2s;
+    border: none; padding: 8px; border-radius: 6px;
+    background: #FF6B6B; color: white; cursor: pointer; font-size: 11px;
 }
-.actions button:hover { background: #ee5253; }
