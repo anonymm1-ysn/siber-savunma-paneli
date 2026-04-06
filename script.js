@@ -1,143 +1,130 @@
-class FoxzyAI {
-    constructor() {
-        this.actor = document.getElementById('fox-actor');
-        this.sprite = document.getElementById('fox-sprite');
-        this.thought = document.getElementById('thought-cloud');
-        
-        this.stats = { hunger: 100, energy: 100, mood: 100 };
-        this.pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-        this.target = { x: this.pos.x, y: this.pos.y };
-        this.state = 'IDLE'; // IDLE, WANDER, SEEK_FOOD, SLEEP, DRAG
-        
-        this.init();
-    }
+const fox = document.getElementById('fox');
+const foxImg = document.getElementById('fox-img');
+const bubble = document.getElementById('bubble');
+const eFill = document.getElementById('e-fill');
+const hFill = document.getElementById('h-fill');
 
-    init() {
-        // Profesyonel açılış gecikmesi
+let stats = { energy: 100, hunger: 100 };
+let pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+let target = { x: pos.x, y: pos.y };
+let isDragging = false;
+
+// Bulut Tabanlı Profesyonel Animasyon Linkleri
+const ANIMATIONS = {
+    run: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXByeXJueXByeXJueXByeXJueXByeXJueXByeXJueXByJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCBmcm9tX2dpZmZ5JmN0PWc/3o7TKSjRrfIPjeiVyM/giphy.gif",
+    idle: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNudTFqcXUwdXp5bmZ1bmx0eWltYXU5eXoxbmV3YnhueGt6eGZlbXImZXA9djFfaW50ZXJuYWxfZ2lmX2J5X2lkJmN0PWc/Ym7YvPVA9hH56/giphy.gif",
+    sleep: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHVpazZpZzh6czY1Z3FmaXN4YnFobG1reGd1eHgyaGxpa2Q1bmJ4ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VvXg0VkS6A2I/giphy.gif"
+};
+
+// 1. AÇILIŞ SİSTEMİ (BOOTING)
+let loadVal = 0;
+const boot = setInterval(() => {
+    loadVal += Math.random() * 15;
+    if (loadVal > 100) loadVal = 100;
+    document.getElementById('load-bar').style.width = loadVal + "%";
+
+    if (loadVal >= 100) {
+        clearInterval(boot);
+        document.getElementById('loader').style.opacity = "0";
         setTimeout(() => {
-            document.getElementById('boot-loader').style.opacity = 0;
-            setTimeout(() => document.getElementById('boot-loader').remove(), 500);
-            this.updateLoop();
-            this.logicLoop();
-        }, 2200);
-
-        this.setupEventListeners();
+            document.getElementById('loader').remove();
+            startSimulation();
+        }, 800);
     }
+}, 100);
 
-    // Gerçek zamanlı pozisyon güncelleme (60 FPS mantığı)
-    updateLoop() {
-        const move = () => {
-            if (this.state !== 'SLEEP' && this.state !== 'DRAG') {
-                // Pürüzsüz takip fiziği (Lerp)
-                this.pos.x += (this.target.x - this.pos.x) * 0.05;
-                this.pos.y += (this.target.y - this.pos.y) * 0.05;
+// 2. FİZİK MOTORU (60FPS HAREKET)
+function physicsEngine() {
+    if (!isDragging && stats.energy > 0) {
+        // Hedefe yumuşak takip (Lerp)
+        pos.x += (target.x - pos.x) * 0.04;
+        pos.y += (target.y - pos.y) * 0.04;
 
-                this.actor.style.left = `${this.pos.x}px`;
-                this.actor.style.top = `${this.pos.y}px`;
+        fox.style.left = pos.x + "px";
+        fox.style.top = pos.y + "px";
 
-                // Yön kontrolü
-                const dist = this.target.x - this.pos.x;
-                if (Math.abs(dist) > 1) {
-                    this.sprite.style.transform = dist > 0 ? 'scaleX(1)' : 'scaleX(-1)';
-                }
-            }
-            requestAnimationFrame(move);
-        };
-        move();
-    }
-
-    // Karar Verme Mekanizması (AI)
-    logicLoop() {
-        setInterval(() => {
-            if (this.state === 'DRAG') return;
-
-            // İhtiyaç analizi
-            if (this.stats.energy < 20) this.setState('SLEEP');
-            else if (this.stats.hunger < 40) this.setState('WANDER');
-            else if (this.state === 'IDLE' && Math.random() > 0.7) this.setState('WANDER');
-
-            // İstatistikleri düşür
-            this.stats.hunger = Math.max(0, this.stats.hunger - 1);
-            this.stats.energy = Math.max(0, this.stats.energy - 0.5);
-            this.updateUI();
-        }, 3000);
-    }
-
-    setState(newState) {
-        this.state = newState;
-        console.log(`AI_STATE: ${newState}`);
-
-        switch (newState) {
-            case 'WANDER':
-                this.target = {
-                    x: Math.random() * (window.innerWidth - 200),
-                    y: Math.random() * (window.innerHeight - 200)
-                };
-                this.sprite.src = 'fox_run.gif';
-                this.showThought("Kelebek mi o? 🦋");
-                setTimeout(() => this.setState('IDLE'), 4000);
-                break;
-            case 'IDLE':
-                this.sprite.src = 'fox_idle.gif';
-                break;
-            case 'SLEEP':
-                this.sprite.src = 'fox_sleep.jpg';
-                this.showThought("Zzz... Enerji doluyor...");
-                break;
+        // Yön Tayini
+        const diff = target.x - pos.x;
+        if (Math.abs(diff) > 3) {
+            fox.style.transform = `scaleX(${diff > 0 ? 1 : -1})`;
         }
     }
+    requestAnimationFrame(physicsEngine);
+}
+physicsEngine();
 
-    showThought(text) {
-        this.thought.innerText = text;
-        this.thought.style.opacity = 1;
-        setTimeout(() => this.thought.style.opacity = 0, 2500);
-    }
+// 3. AI KARAR MEKANİZMASI
+function startSimulation() {
+    setInterval(() => {
+        if (isDragging || stats.energy <= 0) return;
 
-    updateUI() {
-        document.getElementById('h-fill').style.width = `${this.stats.hunger}%`;
-        document.getElementById('e-fill').style.width = `${this.stats.energy}%`;
-    }
+        const decision = Math.random();
 
-    spawnFood() {
-        const bowl = document.getElementById('food-bowl');
-        bowl.style.display = 'block';
-        bowl.style.left = `${Math.random() * 80}vw`;
-        bowl.style.top = `${Math.random() * 80}vh`;
-        this.target = { x: parseFloat(bowl.style.left), y: parseFloat(bowl.style.top) };
-        this.showThought("YEMEK! 🍖");
+        if (decision > 0.65) {
+            // Harekete Geç
+            target.x = Math.random() * (window.innerWidth - 200);
+            target.y = Math.random() * (window.innerHeight - 200);
+            foxImg.src = ANIMATIONS.run;
+            say("Doğada keşfe çıkıyorum! 🌲");
+        } else {
+            // Dinlen
+            foxImg.src = ANIMATIONS.idle;
+        }
+
+        // İstatistikleri Gerçekçi Düşür
+        stats.energy = Math.max(0, stats.energy - 3);
+        stats.hunger = Math.max(0, stats.hunger - 4);
         
-        setTimeout(() => {
-            this.stats.hunger = 100;
-            bowl.style.display = 'none';
-            this.setState('IDLE');
-        }, 5000);
-    }
-
-    setupEventListeners() {
-        // Drag mantığı (Vivi Kedi gibi ama fizik destekli)
-        this.actor.onmousedown = (e) => {
-            this.state = 'DRAG';
-            let shiftX = e.clientX - this.actor.getBoundingClientRect().left;
-            let shiftY = e.clientY - this.actor.getBoundingClientRect().top;
-
-            const moveAt = (pageX, pageY) => {
-                this.pos.x = pageX - shiftX;
-                this.pos.y = pageY - shiftY;
-                this.actor.style.left = this.pos.x + 'px';
-                this.actor.style.top = this.pos.y + 'px';
-            };
-
-            const onMouseMove = (e) => moveAt(e.pageX, e.pageY);
-            document.addEventListener('mousemove', onMouseMove);
-
-            document.onmouseup = () => {
-                document.removeEventListener('mousemove', onMouseMove);
-                this.target = { x: this.pos.x, y: this.pos.y };
-                this.setState('IDLE');
-                document.onmouseup = null;
-            };
-        };
-    }
+        if (stats.energy <= 0) {
+            foxImg.src = ANIMATIONS.sleep;
+            say("Enerjim bitti... Uyuyorum 💤");
+        }
+        updateHUD();
+    }, 4500);
 }
 
-const petManager = new FoxzyAI();
+// 4. YARDIMCI FONKSİYONLAR
+function say(txt) {
+    bubble.innerText = txt;
+    bubble.style.opacity = "1";
+    setTimeout(() => { if(!isDragging) bubble.style.opacity = "0"; }, 3000);
+}
+
+function updateHUD() {
+    eFill.style.width = stats.energy + "%";
+    hFill.style.width = stats.hunger + "%";
+}
+
+function feed() {
+    if (stats.energy <= 0) {
+        stats.energy = 50;
+        foxImg.src = ANIMATIONS.idle;
+    }
+    stats.hunger = 100;
+    stats.energy = Math.min(100, stats.energy + 15);
+    say("Nefis! Teşekkürler Ahmet 🍖");
+    updateHUD();
+}
+
+// 5. ETKİLEŞİM (SÜRÜKLEME)
+fox.onmousedown = (e) => {
+    isDragging = true;
+    const shiftX = e.clientX - fox.offsetLeft;
+    const shiftY = e.clientY - fox.offsetTop;
+    foxImg.src = ANIMATIONS.idle;
+
+    document.onmousemove = (moveE) => {
+        pos.x = moveE.pageX - shiftX;
+        pos.y = moveE.pageY - shiftY;
+        fox.style.left = pos.x + "px";
+        fox.style.top = pos.y + "px";
+    };
+
+    document.onmouseup = () => {
+        document.onmousemove = null;
+        isDragging = false;
+        target.x = pos.x;
+        target.y = pos.y;
+        say("Hahaha, gıdıklandım!");
+    };
+};

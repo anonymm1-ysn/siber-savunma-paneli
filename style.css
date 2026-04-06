@@ -1,53 +1,113 @@
 :root {
     --primary: #e67e22;
-    --bg: #1a1a1a;
+    --dark-bg: #0f172a;
+    --panel-bg: rgba(15, 23, 42, 0.8);
 }
 
-body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); overflow: hidden; font-family: 'Courier New', monospace; }
+body, html {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dark-bg);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
 
-#simulation-space { position: relative; width: 100vw; height: 100vh; background: radial-gradient(circle, #2c3e50 0%, #000000 100%); }
+#stage {
+    position: relative;
+    width: 100vw; height: 100vh;
+    background: radial-gradient(circle, #1e293b 0%, #020617 100%);
+}
 
-/* PROFESYONEL TILKI KATMANI */
-#fox-actor {
-    position: absolute; width: 180px; height: 180px;
-    cursor: pointer; z-index: 10;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* TİLKİ AYARLARI */
+#fox {
+    position: absolute;
+    width: 160px; height: 160px;
+    cursor: grab;
+    z-index: 10;
+    /* Pürüzsüz yön değiştirme */
+    transition: transform 0.2s ease-out;
     display: flex; align-items: center; justify-content: center;
 }
 
-.fox-visuals img {
-    width: 100%; height: auto;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-    transition: filter 0.3s;
+#fox img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
 }
 
-/* ETKİLEŞİM HALKASI (PROFESYONEL DOKUNUŞ) */
-.interaction-ring {
-    position: absolute; width: 120%; height: 120%;
-    border: 2px dashed rgba(230, 126, 34, 0.3);
-    border-radius: 50%; opacity: 0;
-    animation: rotate 10s linear infinite;
+#fox:active { cursor: grabbing; }
+
+/* KONUŞMA BALONU */
+#bubble {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #1e293b;
+    opacity: 0;
+    transition: 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
 }
-#fox-actor:hover .interaction-ring { opacity: 1; }
 
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* HUD TASARIMI */
+/* HUD PANELİ */
 #hud {
-    position: fixed; top: 20px; left: 20px;
-    background: rgba(0,0,0,0.8); padding: 20px;
-    border-left: 4px solid var(--primary); color: white;
+    position: fixed;
+    top: 25px; left: 25px;
+    background: var(--panel-bg);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(230, 126, 34, 0.5);
+    color: white;
+    backdrop-filter: blur(8px);
+    width: 180px;
 }
-.bar { width: 150px; height: 8px; background: #333; margin: 5px 0 15px; border-radius: 4px; overflow: hidden; }
-.bar div { height: 100%; background: var(--primary); transition: width 0.5s; }
 
-/* BOOT LOADER */
-#boot-loader {
-    position: fixed; inset: 0; background: black; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+.stat-row { margin-bottom: 15px; }
+.stat-row span { font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+
+.bar {
+    width: 100%; height: 8px;
+    background: #334155;
+    margin-top: 6px;
+    border-radius: 4px;
+    overflow: hidden;
 }
-.matrix-text { color: var(--primary); margin-bottom: 20px; letter-spacing: 2px; }
-.progress-bar { width: 300px; height: 2px; background: #222; }
-.progress-bar .fill { width: 0; height: 100%; background: var(--primary); animation: load 2s forwards; }
 
-@keyframes load { to { width: 100%; } }
+.fill {
+    height: 100%;
+    background: var(--primary);
+    width: 100%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#feed-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#feed-btn:hover { background: #d35400; transform: scale(1.02); }
+
+/* YÜKLEYİCİ */
+#loader {
+    position: fixed; inset: 0;
+    background: #000; z-index: 9999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+
+.matrix-text { color: var(--primary); font-family: monospace; margin-bottom: 15px; }
+.load-track { width: 250px; height: 2px; background: #1e293b; }
+#load-bar { width: 0%; height: 100%; background: var(--primary); transition: 0.1s; }

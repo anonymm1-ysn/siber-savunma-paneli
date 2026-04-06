@@ -2,44 +2,44 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Foxzy AI Simulation v6.0 - Professional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foxzy AI Pro - Cloud Edition</title>
+    <!-- CSS Dosyasını Bağlıyoruz -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="simulation-space">
-        <!-- Yükleme Ekranı -->
-        <div id="boot-loader">
-            <div class="matrix-text">FOXZY_CORE_v6.0_INITIALIZING...</div>
-            <div class="progress-bar"><div class="fill"></div></div>
+    <!-- Matrix Yükleme Ekranı -->
+    <div id="loader">
+        <div class="matrix-text">CONNECTING_TO_FOX_CLOUD...</div>
+        <div class="load-track">
+            <div id="load-bar"></div>
         </div>
-
-        <!-- Tilki Konteynırı -->
-        <div id="fox-actor" class="state-idle">
-            <div id="thought-cloud"></div>
-            <div class="fox-visuals">
-                <img id="fox-sprite" src="fox_idle.gif" alt="Foxzy">
-            </div>
-            <!-- Etkileşim Halkası -->
-            <div class="interaction-ring"></div>
-        </div>
-
-        <!-- Dinamik Objeler (Yemek Kapları vb.) -->
-        <div id="food-bowl" style="display:none;">🍖</div>
     </div>
 
-    <!-- HUD (Heads-Up Display) - Oyun Paneli -->
+    <!-- Simülasyon Sahnesi -->
+    <div id="stage">
+        <div id="fox">
+            <div id="bubble">Merhaba Ahmet!</div>
+            <!-- Başlangıç resmi (Idle) -->
+            <img id="fox-img" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNudTFqcXUwdXp5bmZ1bmx0eWltYXU5eXoxbmV3YnhueGt6eGZlbXImZXA9djFfaW50ZXJuYWxfZ2lmX2J5X2lkJmN0PWc/Ym7YvPVA9hH56/giphy.gif" draggable="false">
+        </div>
+    </div>
+
+    <!-- HUD (Bilgi Paneli) -->
     <div id="hud">
-        <div class="status-bars">
-            <div class="bar-container"><span>HUNGER</span><div class="bar"><div id="h-fill" style="width:100%"></div></div></div>
-            <div class="bar-container"><span>ENERGY</span><div class="bar"><div id="e-fill" style="width:100%"></div></div></div>
+        <div class="stat-row">
+            <span>ENERGY</span>
+            <div class="bar"><div id="e-fill" class="fill"></div></div>
         </div>
-        <div class="pro-actions">
-            <button onclick="petManager.spawnFood()">FEED (F)</button>
-            <button onclick="petManager.playWithFox()">PLAY (P)</button>
+        <div class="stat-row">
+            <span>HUNGER</span>
+            <div class="bar"><div id="h-fill" class="fill"></div></div>
         </div>
+        <button id="feed-btn" onclick="feed()">YEMEK VER (🍖)</button>
     </div>
 
+    <!-- JS Dosyasını Bağlıyoruz -->
     <script src="script.js"></script>
 </body>
 </html>
