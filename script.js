@@ -2,13 +2,12 @@ let stats = { hunger: 100, thirst: 100, energy: 100, clean: 100 };
 const foxy = document.getElementById('foxy-container');
 const bubble = document.getElementById('speech-bubble');
 
-// Yükleme Ekranı Kontrolü
+// Yükleme ekranını kapat
 window.onload = () => {
     setTimeout(() => {
-        const loader = document.getElementById('loading-screen');
-        loader.style.opacity = "0";
-        setTimeout(() => loader.style.display = "none", 500);
-    }, 2000);
+        document.getElementById('loading-screen').style.opacity = "0";
+        setTimeout(() => document.getElementById('loading-screen').style.display = "none", 500);
+    }, 2500);
 };
 
 function updateStats() {
@@ -17,11 +16,10 @@ function updateStats() {
     document.getElementById('energy-val').innerText = Math.floor(stats.energy);
     document.getElementById('clean-val').innerText = Math.floor(stats.clean);
 
-    foxy.classList.remove('sleeping', 'happy');
-
+    foxy.classList.remove('sleeping');
     if (stats.energy <= 0) {
         foxy.classList.add('sleeping');
-        showSpeech("Zzz... Çok yorgunum...");
+        showSpeech("Zzz...");
     }
 }
 
@@ -32,12 +30,12 @@ function showSpeech(text) {
 }
 
 // Aksiyonlar
-function feedFoxy() { if(stats.energy > 0) { stats.hunger = Math.min(100, stats.hunger + 25); showSpeech("Nefis!"); updateStats(); } }
-function waterFoxy() { if(stats.energy > 0) { stats.thirst = Math.min(100, stats.thirst + 25); showSpeech("Taze su!"); updateStats(); } }
-function petFoxy() { if(stats.energy > 0) { foxy.classList.add('happy'); showSpeech("Hehe!"); setTimeout(updateStats, 1000); } }
-function washFoxy() { if(stats.energy > 0) { stats.clean = Math.min(100, stats.clean + 40); showSpeech("Mis!"); updateStats(); } }
+function feedFoxy() { stats.hunger = Math.min(100, stats.hunger + 25); showSpeech("Nefis!"); updateStats(); }
+function waterFoxy() { stats.thirst = Math.min(100, stats.thirst + 25); showSpeech("Ferah!"); updateStats(); }
+function petFoxy() { stats.energy = Math.min(100, stats.energy + 10); showSpeech("Hehe!"); updateStats(); }
+function washFoxy() { stats.clean = Math.min(100, stats.clean + 30); showSpeech("Paklandım!"); updateStats(); }
 
-// Zamanla Azalma
+// Acıkma Döngüsü
 setInterval(() => {
     if (stats.energy > 0) {
         stats.hunger = Math.max(0, stats.hunger - 2);
@@ -49,14 +47,16 @@ setInterval(() => {
     updateStats();
 }, 5000);
 
-// Sürükleme (Vivi Kedi Mantığı)
+// Sürükleme Sistemi
 let isDragging = false;
 let ox, oy;
 
 foxy.onmousedown = (e) => {
     isDragging = true;
+    foxy.classList.add('dragging');
     ox = e.clientX - foxy.offsetLeft;
     oy = e.clientY - foxy.offsetTop;
+    foxy.style.transition = "none";
 };
 
 document.onmousemove = (e) => {
@@ -65,4 +65,8 @@ document.onmousemove = (e) => {
     foxy.style.top = (e.clientY - oy) + "px";
 };
 
-document.onmouseup = () => isDragging = false;
+document.onmouseup = () => {
+    isDragging = false;
+    foxy.classList.remove('dragging');
+    foxy.style.transition = "transform 0.1s ease";
+};
