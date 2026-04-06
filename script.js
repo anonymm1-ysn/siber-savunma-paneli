@@ -1,72 +1,143 @@
-let stats = { hunger: 100, thirst: 100, energy: 100, clean: 100 };
-const foxy = document.getElementById('foxy-container');
-const bubble = document.getElementById('speech-bubble');
+class FoxzyAI {
+    constructor() {
+        this.actor = document.getElementById('fox-actor');
+        this.sprite = document.getElementById('fox-sprite');
+        this.thought = document.getElementById('thought-cloud');
+        
+        this.stats = { hunger: 100, energy: 100, mood: 100 };
+        this.pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        this.target = { x: this.pos.x, y: this.pos.y };
+        this.state = 'IDLE'; // IDLE, WANDER, SEEK_FOOD, SLEEP, DRAG
+        
+        this.init();
+    }
 
-// Yükleme ekranını kapat
-window.onload = () => {
-    setTimeout(() => {
-        document.getElementById('loading-screen').style.opacity = "0";
-        setTimeout(() => document.getElementById('loading-screen').style.display = "none", 500);
-    }, 2500);
-};
+    init() {
+        // Profesyonel açılış gecikmesi
+        setTimeout(() => {
+            document.getElementById('boot-loader').style.opacity = 0;
+            setTimeout(() => document.getElementById('boot-loader').remove(), 500);
+            this.updateLoop();
+            this.logicLoop();
+        }, 2200);
 
-function updateStats() {
-    document.getElementById('hunger-val').innerText = Math.floor(stats.hunger);
-    document.getElementById('thirst-val').innerText = Math.floor(stats.thirst);
-    document.getElementById('energy-val').innerText = Math.floor(stats.energy);
-    document.getElementById('clean-val').innerText = Math.floor(stats.clean);
+        this.setupEventListeners();
+    }
 
-    foxy.classList.remove('sleeping');
-    if (stats.energy <= 0) {
-        foxy.classList.add('sleeping');
-        showSpeech("Zzz...");
+    // Gerçek zamanlı pozisyon güncelleme (60 FPS mantığı)
+    updateLoop() {
+        const move = () => {
+            if (this.state !== 'SLEEP' && this.state !== 'DRAG') {
+                // Pürüzsüz takip fiziği (Lerp)
+                this.pos.x += (this.target.x - this.pos.x) * 0.05;
+                this.pos.y += (this.target.y - this.pos.y) * 0.05;
+
+                this.actor.style.left = `${this.pos.x}px`;
+                this.actor.style.top = `${this.pos.y}px`;
+
+                // Yön kontrolü
+                const dist = this.target.x - this.pos.x;
+                if (Math.abs(dist) > 1) {
+                    this.sprite.style.transform = dist > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+                }
+            }
+            requestAnimationFrame(move);
+        };
+        move();
+    }
+
+    // Karar Verme Mekanizması (AI)
+    logicLoop() {
+        setInterval(() => {
+            if (this.state === 'DRAG') return;
+
+            // İhtiyaç analizi
+            if (this.stats.energy < 20) this.setState('SLEEP');
+            else if (this.stats.hunger < 40) this.setState('WANDER');
+            else if (this.state === 'IDLE' && Math.random() > 0.7) this.setState('WANDER');
+
+            // İstatistikleri düşür
+            this.stats.hunger = Math.max(0, this.stats.hunger - 1);
+            this.stats.energy = Math.max(0, this.stats.energy - 0.5);
+            this.updateUI();
+        }, 3000);
+    }
+
+    setState(newState) {
+        this.state = newState;
+        console.log(`AI_STATE: ${newState}`);
+
+        switch (newState) {
+            case 'WANDER':
+                this.target = {
+                    x: Math.random() * (window.innerWidth - 200),
+                    y: Math.random() * (window.innerHeight - 200)
+                };
+                this.sprite.src = 'fox_run.gif';
+                this.showThought("Kelebek mi o? 🦋");
+                setTimeout(() => this.setState('IDLE'), 4000);
+                break;
+            case 'IDLE':
+                this.sprite.src = 'fox_idle.gif';
+                break;
+            case 'SLEEP':
+                this.sprite.src = 'fox_sleep.jpg';
+                this.showThought("Zzz... Enerji doluyor...");
+                break;
+        }
+    }
+
+    showThought(text) {
+        this.thought.innerText = text;
+        this.thought.style.opacity = 1;
+        setTimeout(() => this.thought.style.opacity = 0, 2500);
+    }
+
+    updateUI() {
+        document.getElementById('h-fill').style.width = `${this.stats.hunger}%`;
+        document.getElementById('e-fill').style.width = `${this.stats.energy}%`;
+    }
+
+    spawnFood() {
+        const bowl = document.getElementById('food-bowl');
+        bowl.style.display = 'block';
+        bowl.style.left = `${Math.random() * 80}vw`;
+        bowl.style.top = `${Math.random() * 80}vh`;
+        this.target = { x: parseFloat(bowl.style.left), y: parseFloat(bowl.style.top) };
+        this.showThought("YEMEK! 🍖");
+        
+        setTimeout(() => {
+            this.stats.hunger = 100;
+            bowl.style.display = 'none';
+            this.setState('IDLE');
+        }, 5000);
+    }
+
+    setupEventListeners() {
+        // Drag mantığı (Vivi Kedi gibi ama fizik destekli)
+        this.actor.onmousedown = (e) => {
+            this.state = 'DRAG';
+            let shiftX = e.clientX - this.actor.getBoundingClientRect().left;
+            let shiftY = e.clientY - this.actor.getBoundingClientRect().top;
+
+            const moveAt = (pageX, pageY) => {
+                this.pos.x = pageX - shiftX;
+                this.pos.y = pageY - shiftY;
+                this.actor.style.left = this.pos.x + 'px';
+                this.actor.style.top = this.pos.y + 'px';
+            };
+
+            const onMouseMove = (e) => moveAt(e.pageX, e.pageY);
+            document.addEventListener('mousemove', onMouseMove);
+
+            document.onmouseup = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                this.target = { x: this.pos.x, y: this.pos.y };
+                this.setState('IDLE');
+                document.onmouseup = null;
+            };
+        };
     }
 }
 
-function showSpeech(text) {
-    bubble.innerText = text;
-    bubble.style.opacity = "1";
-    setTimeout(() => bubble.style.opacity = "0", 3000);
-}
-
-// Aksiyonlar
-function feedFoxy() { stats.hunger = Math.min(100, stats.hunger + 25); showSpeech("Nefis!"); updateStats(); }
-function waterFoxy() { stats.thirst = Math.min(100, stats.thirst + 25); showSpeech("Ferah!"); updateStats(); }
-function petFoxy() { stats.energy = Math.min(100, stats.energy + 10); showSpeech("Hehe!"); updateStats(); }
-function washFoxy() { stats.clean = Math.min(100, stats.clean + 30); showSpeech("Paklandım!"); updateStats(); }
-
-// Acıkma Döngüsü
-setInterval(() => {
-    if (stats.energy > 0) {
-        stats.hunger = Math.max(0, stats.hunger - 2);
-        stats.thirst = Math.max(0, stats.thirst - 3);
-        stats.energy = Math.max(0, stats.energy - 1);
-    } else {
-        stats.energy = Math.min(100, stats.energy + 5);
-    }
-    updateStats();
-}, 5000);
-
-// Sürükleme Sistemi
-let isDragging = false;
-let ox, oy;
-
-foxy.onmousedown = (e) => {
-    isDragging = true;
-    foxy.classList.add('dragging');
-    ox = e.clientX - foxy.offsetLeft;
-    oy = e.clientY - foxy.offsetTop;
-    foxy.style.transition = "none";
-};
-
-document.onmousemove = (e) => {
-    if (!isDragging) return;
-    foxy.style.left = (e.clientX - ox) + "px";
-    foxy.style.top = (e.clientY - oy) + "px";
-};
-
-document.onmouseup = () => {
-    isDragging = false;
-    foxy.classList.remove('dragging');
-    foxy.style.transition = "transform 0.1s ease";
-};
+const petManager = new FoxzyAI();

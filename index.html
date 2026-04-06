@@ -2,55 +2,41 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foxzy ProLab v4.0</title>
+    <title>Foxzy AI Simulation v6.0 - Professional</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Yükleme Ekranı -->
-    <div id="loading-screen">
-        <div class="loader"></div>
-        <h3>Foxzy ProLab v4.0 Yükleniyor...</h3>
-        <p>Uzuvlar ve kuyruk senkronize ediliyor...</p>
+    <div id="simulation-space">
+        <!-- Yükleme Ekranı -->
+        <div id="boot-loader">
+            <div class="matrix-text">FOXZY_CORE_v6.0_INITIALIZING...</div>
+            <div class="progress-bar"><div class="fill"></div></div>
+        </div>
+
+        <!-- Tilki Konteynırı -->
+        <div id="fox-actor" class="state-idle">
+            <div id="thought-cloud"></div>
+            <div class="fox-visuals">
+                <img id="fox-sprite" src="fox_idle.gif" alt="Foxzy">
+            </div>
+            <!-- Etkileşim Halkası -->
+            <div class="interaction-ring"></div>
+        </div>
+
+        <!-- Dinamik Objeler (Yemek Kapları vb.) -->
+        <div id="food-bowl" style="display:none;">🍖</div>
     </div>
 
-    <!-- Yeni Uzuvlu Foxy -->
-    <div id="foxy-container">
-        <div id="speech-bubble">Merhaba Ahmet!</div>
-        
-        <div class="foxy-tail"></div>
-        
-        <div class="foxy-leg left"></div>
-        <div class="foxy-leg right"></div>
-        
-        <div class="foxy-arm left"></div>
-        <div class="foxy-arm right"></div>
-        
-        <div class="foxy-head">
-            <div class="foxy-ear left"></div>
-            <div class="foxy-ear right"></div>
-            <div class="foxy-eye left"></div>
-            <div class="foxy-eye right"></div>
-            <div class="foxy-nose"></div>
+    <!-- HUD (Heads-Up Display) - Oyun Paneli -->
+    <div id="hud">
+        <div class="status-bars">
+            <div class="bar-container"><span>HUNGER</span><div class="bar"><div id="h-fill" style="width:100%"></div></div></div>
+            <div class="bar-container"><span>ENERGY</span><div class="bar"><div id="e-fill" style="width:100%"></div></div></div>
         </div>
-        
-        <div class="foxy-torso"></div>
-    </div>
-
-    <!-- Kontrol Paneli -->
-    <div class="control-panel">
-        <div class="stats">
-            <div class="stat-item">Açlık: <span id="hunger-val">100</span>%</div>
-            <div class="stat-item">Susuzluk: <span id="thirst-val">100</span>%</div>
-            <div class="stat-item">Enerji: <span id="energy-val">100</span>%</div>
-            <div class="stat-item">Temizlik: <span id="clean-val">100</span>%</div>
-        </div>
-        <div class="actions">
-            <button onclick="feedFoxy()">🍖 Yemek</button>
-            <button onclick="waterFoxy()">💧 Su</button>
-            <button onclick="petFoxy()">✋ Sev</button>
-            <button onclick="washFoxy()">🧽 Yıka</button>
+        <div class="pro-actions">
+            <button onclick="petManager.spawnFood()">FEED (F)</button>
+            <button onclick="petManager.playWithFox()">PLAY (P)</button>
         </div>
     </div>
 

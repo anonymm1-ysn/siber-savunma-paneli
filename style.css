@@ -1,135 +1,53 @@
 :root {
-    --foxy-orange: #FF6B6B;
-    --foxy-white: #FFFFFF;
-    --foxy-dark: #333333;
+    --primary: #e67e22;
+    --bg: #1a1a1a;
 }
 
-body, html {
-    margin: 0; padding: 0; height: 100%;
-    overflow: hidden; background: #e0e0e0;
-    font-family: 'Segoe UI', sans-serif; user-select: none;
+body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); overflow: hidden; font-family: 'Courier New', monospace; }
+
+#simulation-space { position: relative; width: 100vw; height: 100vh; background: radial-gradient(circle, #2c3e50 0%, #000000 100%); }
+
+/* PROFESYONEL TILKI KATMANI */
+#fox-actor {
+    position: absolute; width: 180px; height: 180px;
+    cursor: pointer; z-index: 10;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; align-items: center; justify-content: center;
 }
 
-/* YÜKLEME EKRANI */
-#loading-screen {
-    position: fixed; inset: 0; background: var(--foxy-orange);
-    color: white; z-index: 10000; display: flex;
-    flex-direction: column; align-items: center; justify-content: center;
-    transition: opacity 0.5s;
-}
-.loader {
-    border: 6px solid #f3f3f3; border-top: 6px solid white;
-    border-radius: 50%; width: 40px; height: 40px;
-    animation: spin 1s linear infinite; margin-bottom: 10px;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* FOXY ANA GÖVDE */
-#foxy-container {
-    position: absolute; width: 140px; height: 180px;
-    cursor: grab; z-index: 1000; transition: transform 0.1s ease;
+.fox-visuals img {
+    width: 100%; height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    transition: filter 0.3s;
 }
 
-/* KAFA */
-.foxy-head {
-    position: relative; width: 80px; height: 70px;
-    background: var(--foxy-orange); border-radius: 40px 40px 20px 20px;
-    margin: 0 auto; z-index: 10;
-    animation: head-bob 1s ease-in-out infinite;
+/* ETKİLEŞİM HALKASI (PROFESYONEL DOKUNUŞ) */
+.interaction-ring {
+    position: absolute; width: 120%; height: 120%;
+    border: 2px dashed rgba(230, 126, 34, 0.3);
+    border-radius: 50%; opacity: 0;
+    animation: rotate 10s linear infinite;
 }
-.foxy-head::before, .foxy-head::after {
-    content: ""; position: absolute; bottom: 0;
-    width: 45px; height: 40px; background: var(--foxy-white);
-    border-radius: 50%; z-index: -1;
-}
-.foxy-head::before { left: -5px; transform: rotate(-15deg); }
-.foxy-head::after { right: -5px; transform: rotate(15deg); }
+#fox-actor:hover .interaction-ring { opacity: 1; }
 
-/* GÖZLER VE BURUN */
-.foxy-eye {
-    position: absolute; top: 25px; width: 10px; height: 14px;
-    background: var(--foxy-dark); border-radius: 50%;
-}
-.foxy-eye.left { left: 22px; }
-.foxy-eye.right { right: 22px; }
-.foxy-nose {
-    position: absolute; bottom: 15px; left: 50%;
-    transform: translateX(-50%); width: 10px; height: 6px;
-    background: black; border-radius: 50%;
-}
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* KULAKLAR */
-.foxy-ear {
-    position: absolute; top: -15px; width: 0; height: 0;
-    border-left: 18px solid transparent; border-right: 18px solid transparent;
-    border-bottom: 35px solid var(--foxy-orange);
+/* HUD TASARIMI */
+#hud {
+    position: fixed; top: 20px; left: 20px;
+    background: rgba(0,0,0,0.8); padding: 20px;
+    border-left: 4px solid var(--primary); color: white;
 }
-.foxy-ear.left { left: 5px; transform: rotate(-15deg); }
-.foxy-ear.right { right: 5px; transform: rotate(15deg); }
+.bar { width: 150px; height: 8px; background: #333; margin: 5px 0 15px; border-radius: 4px; overflow: hidden; }
+.bar div { height: 100%; background: var(--primary); transition: width 0.5s; }
 
-/* GÖVDE */
-.foxy-torso {
-    position: relative; width: 60px; height: 65px;
-    background: var(--foxy-orange); border-radius: 10px 10px 25px 25px;
-    margin: -5px auto 0 auto; z-index: 5;
+/* BOOT LOADER */
+#boot-loader {
+    position: fixed; inset: 0; background: black; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
+.matrix-text { color: var(--primary); margin-bottom: 20px; letter-spacing: 2px; }
+.progress-bar { width: 300px; height: 2px; background: #222; }
+.progress-bar .fill { width: 0; height: 100%; background: var(--primary); animation: load 2s forwards; }
 
-/* KOLLAR */
-.foxy-arm {
-    position: absolute; top: 75px; width: 14px; height: 40px;
-    background: var(--foxy-orange); border-radius: 10px; z-index: 4;
-    transform-origin: top center; animation: arm-swing 1.5s ease-in-out infinite;
-}
-.foxy-arm.left { left: 30px; }
-.foxy-arm.right { right: 30px; }
-.foxy-arm::after {
-    content: ""; position: absolute; bottom: 0; width: 100%; height: 10px;
-    background: var(--foxy-dark); border-radius: 50%;
-}
-
-/* BACAKLAR */
-.foxy-leg {
-    position: absolute; top: 130px; width: 15px; height: 35px;
-    background: var(--foxy-orange); border-radius: 10px; z-index: 3;
-}
-.foxy-leg.left { left: 45px; animation: leg-walk 0.8s ease infinite; }
-.foxy-leg.right { right: 45px; animation: leg-walk 0.8s ease infinite 0.4s; }
-
-/* KUYRUK */
-.foxy-tail {
-    position: absolute; top: 80px; left: 10px; width: 50px; height: 80px;
-    background: var(--foxy-orange); border-radius: 5px 40px 5px 40px;
-    transform-origin: top left; transform: rotate(30deg); z-index: 2;
-    animation: tail-wag 2s ease-in-out infinite;
-}
-.foxy-tail::after {
-    content: ""; position: absolute; bottom: 0; right: 0; width: 25px; height: 40px;
-    background: white; border-radius: 5px 40px 5px 40px;
-}
-
-/* ANİMASYON TANIMLARI */
-@keyframes head-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-@keyframes arm-swing { 0%, 100% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } }
-@keyframes leg-walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-@keyframes tail-wag { 0%, 100% { transform: rotate(35deg); } 50% { transform: rotate(20deg); } }
-
-/* TUTARKEN SARKMA MODU */
-.dragging .foxy-arm { animation: none; transform: scaleY(1.2); }
-.dragging .foxy-leg { animation: leg-sark 0.3s infinite; }
-@keyframes leg-sark { 0%, 100% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } }
-
-/* UYUMA VE PANEL */
-.sleeping { transform: rotate(90deg) translate(40px, -20px) !important; filter: grayscale(0.7); }
-#speech-bubble {
-    background: white; padding: 10px; border-radius: 10px;
-    position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); opacity: 0; transition: 0.3s;
-}
-.control-panel {
-    position: fixed; bottom: 20px; right: 20px; background: white;
-    padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.actions button {
-    background: var(--foxy-orange); color: white; border: none;
-    padding: 8px; margin: 2px; border-radius: 5px; cursor: pointer;
-}
+@keyframes load { to { width: 100%; } }
