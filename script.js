@@ -6,109 +6,136 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 
-// OYUNCU AYARLARI (Senin linkindeki 64x64 karaktere göre uyarlandı)
-const player = {
-    x: 400,
-    y: 300,
-    w: 64, // Genişlik
-    h: 64, // Yükseklik
-    speed: 4,
-    color: "#FFD700" // Karakterin baskın sarı/altın rengi
-};
+// OYUN DURUMLARI: 'intro' (kitap okuma), 'dialogue' (anne konuşuyor), 'sleeping' (geçiş), 'nightmare' (kabus)
+let gameState = 'intro';
+let dialogueIndex = 0;
+let dialogueText = "";
 
-// DUVARLAR (Dört tarafı kapatıyoruz ki dışarı çıkıp yok olmasın)
-const walls = [
-    { x: 0, y: 0, w: 800, h: 20 },      // Üst Duvar
-    { x: 0, y: 580, w: 800, h: 20 },    // Alt Duvar
-    { x: 0, y: 0, w: 20, h: 600 },      // Sol Duvar
-    { x: 780, y: 0, w: 20, h: 600 }     // Sağ Duvar
+const player = { x: 370, y: 280, w: 64, h: 64 };
+
+// DİYALOGLAR
+const scenes = [
+    { speaker: "ANNE", text: "Hadi yat artık oğlum, saat çok geç oldu." },
+    { speaker: "ÇOCUK", text: "...Tamam anne, yatıyorum." },
+    { speaker: "İÇ SES", text: "Bu yatak da hiç rahat hissettirmiyor..." }
 ];
 
-const keys = {};
-window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
-window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+// KLAVYE
+window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'e' || e.key === ' ') {
+        advanceDialogue();
+    }
+});
 
-// Korku Müziği (VHS Uğultusu)
 function playHorrorMusic() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
+    osc.type = 'sine'; // Giriş için daha sakin ama tekinsiz bir ses
+    osc.frequency.setValueAtTime(60, audioCtx.currentTime);
     const gain = audioCtx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(45, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
 }
 
-// ÇARPIŞMA KONTROLÜ (Duvarın içine girmeyi engeller)
-function checkCollision(nextX, nextY) {
-    for (let wall of walls) {
-        if (nextX < wall.x + wall.w &&
-            nextX + player.w > wall.x &&
-            nextY < wall.y + wall.h &&
-            nextY + player.h > wall.y) {
-            return true; // Çarpışma var
+function advanceDialogue() {
+    if (gameState === 'intro') {
+        gameState = 'dialogue';
+        dialogueText = scenes[0].text;
+    } else if (gameState === 'dialogue') {
+        dialogueIndex++;
+        if (dialogueIndex < 2) {
+            dialogueText = scenes[dialogueIndex].text;
+        } else {
+            gameState = 'sleeping';
+            setTimeout(() => {
+                gameState = 'nightmare_intro';
+                dialogueText = scenes[2].text;
+            }, 3000);
         }
     }
-    return false; // Yol temiz
 }
 
-function update() {
-    let newX = player.x;
-    let newY = player.y;
+function drawUndertaleBox(speaker, text) {
+    // Siyah Kutu
+    ctx.fillStyle = "black";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 4;
+    ctx.fillRect(50, 400, 700, 150);
+    ctx.strokeRect(50, 400, 700, 150);
 
-    if (keys['w']) newY -= player.speed;
-    if (keys['s']) newY += player.speed;
-    if (keys['a']) newX -= player.speed;
-    if (keys['d']) newX += player.speed;
+    // İsim
+    ctx.fillStyle = "white";
+    ctx.font = "20px 'Courier New'";
+    ctx.fillText(speaker + ":", 70, 440);
 
-    // Eğer yeni koordinatlarda duvar yoksa hareket et
-    if (!checkCollision(newX, player.y)) {
-        player.x = newX;
-    }
-    if (!checkCollision(player.x, newY)) {
-        player.y = newY;
-    }
+    // Metin
+    ctx.font = "18px 'Courier New'";
+    ctx.fillText(text, 70, 480);
+    
+    ctx.font = "12px 'Courier New'";
+    ctx.fillText("[DEVAM ETMEK İÇİN 'E' BAS]", 580, 530);
 }
 
 function draw() {
-    // Karanlık Zemin
-    ctx.fillStyle = "#050505";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Duvarları Çiz (Görünür olması için koyu gri)
-    ctx.fillStyle = "#1a1a1a";
-    walls.forEach(w => ctx.fillRect(w.x, w.y, w.w, w.h));
+    if (gameState === 'intro' || gameState === 'dialogue') {
+        // ODA ÇİZİMİ
+        ctx.fillStyle = "#050505";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // YENİ PİKSEL KARAKTER ÇİZİMİ (Verdiğin linkteki karaktere benzetildi)
-    let px = player.x; 
-    let py = player.y;
+        // PENCERE VE AY IŞIĞI
+        ctx.fillStyle = "#1a1a3a"; // Pencere camı
+        ctx.fillRect(600, 100, 120, 160);
+        
+        // Ay Işığı Süzülmesi (Yere doğru vuran ışık)
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(150, 150, 255, 0.1)";
+        ctx.moveTo(600, 100);
+        ctx.lineTo(200, 600);
+        ctx.lineTo(500, 600);
+        ctx.lineTo(720, 100);
+        ctx.fill();
 
-    // Pelerin/Gövde
-    ctx.fillStyle = "#D4AF37"; // Altın sarısı pelerin
-    ctx.fillRect(px + 16, py + 20, 32, 36);
-    
-    // Kafa
-    ctx.fillStyle = "#FFE0BD"; // Ten rengi
-    ctx.fillRect(px + 20, py + 4, 24, 20);
-    
-    // Saçlar
-    ctx.fillStyle = "#3E2723"; // Koyu kahve saç
-    ctx.fillRect(px + 20, py, 24, 6);
+        // YATAK
+        ctx.fillStyle = "#221100";
+        ctx.fillRect(350, 250, 120, 180); // Karyola
+        ctx.fillStyle = "#444";
+        ctx.fillRect(355, 255, 110, 140); // Çarşaf
 
-    // Gözler (Karakterin gizemli bakışı)
-    ctx.fillStyle = "black";
-    ctx.fillRect(px + 26, py + 12, 4, 4);
-    ctx.fillRect(px + 36, py + 12, 4, 4);
+        // KARAKTER (Linkteki pelerinli çocuk tasviri - kitap okuyor)
+        let px = player.x; let py = player.y;
+        ctx.fillStyle = "#D4AF37"; ctx.fillRect(px+10, py+20, 44, 44); // Sarı pelerin
+        ctx.fillStyle = "#FFE0BD"; ctx.fillRect(px+15, py, 34, 30); // Kafa
+        ctx.fillStyle = "#3E2723"; ctx.fillRect(px+15, py, 34, 10); // Saç
+        
+        // Elinde Kitap
+        ctx.fillStyle = "white";
+        ctx.fillRect(px + 20, py + 35, 24, 15);
+    }
 
-    // Gölgelendirme (Pelerin detayı)
-    ctx.fillStyle = "#B8860B";
-    ctx.fillRect(px + 28, py + 24, 8, 30);
+    if (gameState === 'dialogue') {
+        drawUndertaleBox("ANNE", dialogueText);
+    }
+
+    if (gameState === 'sleeping') {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "20px 'Courier New'";
+        ctx.fillText("...Zzz...", 370, 300);
+    }
+
+    if (gameState === 'nightmare_intro') {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawUndertaleBox("DÜŞÜNCE", dialogueText);
+    }
 }
 
 function gameLoop() {
-    update();
     draw();
     requestAnimationFrame(gameLoop);
 }
@@ -118,4 +145,6 @@ playBtn.addEventListener('click', () => {
     menuScreen.style.display = "none";
     canvas.style.display = "block";
     gameLoop();
+    // 2 saniye sonra anne kapıyı açsın (otomatik başlatma)
+    setTimeout(() => { if(gameState === 'intro') advanceDialogue(); }, 3000);
 });
