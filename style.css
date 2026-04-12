@@ -6,21 +6,21 @@ body, html {
     overflow: hidden;
 }
 
-/* VHS Menü Tasarımı */
 .vhs-effect {
     position: fixed;
     width: 100vw; height: 100vh;
-    background: #080808;
-    display: flex; justify-content: center; align-items: center;
+    background: #050505;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
     z-index: 100;
 }
 
 .tracking-line {
     position: absolute;
-    width: 100%; height: 10px;
+    width: 100%; height: 15px;
     background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 15px white;
-    animation: moveLine 8s linear infinite;
+    box-shadow: 0 0 20px white;
+    animation: moveLine 6s linear infinite;
+    filter: blur(3px);
 }
 
 @keyframes moveLine {
@@ -29,27 +29,26 @@ body, html {
 }
 
 .glitch-title {
-    font-size: 3rem;
-    text-shadow: 2px 0 red, -2px 0 blue;
-    margin-bottom: 30px;
+    font-size: 3.5rem;
+    text-shadow: 3px 0 red, -3px 0 blue;
+    animation: jitter 0.2s infinite;
+}
+
+@keyframes jitter {
+    0% { transform: translate(0,0); }
+    50% { transform: translate(-2px, 2px); }
+    100% { transform: translate(2px, -2px); }
 }
 
 #play-btn {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    padding: 10px 40px;
-    font-size: 1.5rem;
-    cursor: pointer;
+    background: transparent; color: white; border: 3px solid white;
+    padding: 15px 60px; font-size: 1.8rem; cursor: pointer; transition: 0.3s;
 }
 
-#play-btn:hover {
-    background: white; color: black;
-}
+#play-btn:hover { background: white; color: black; box-shadow: 0 0 30px white; }
 
-/* Oyun Tuvali */
 #gameCanvas {
-    display: block;
-    margin: 0 auto;
-    background: #050505;
+    display: block; margin: 0 auto;
+    background: #000;
+    image-rendering: pixelated; /* Pikseller net görünsün */
 }
