@@ -6,68 +6,56 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 
-let gameState = 'intro'; // intro, mother_entry, dialogue, sleeping, nightmare
+let gameState = 'intro'; 
 let dialogueIndex = 0;
-let motherPos = -100; // Kapı dışından başlayacak
+let motherPos = -100; 
 
-const player = { x: 380, y: 300, w: 64, h: 64 };
-const mother = { x: 50, y: 250, w: 68, h: 110 }; // Daha uzun anne
+// Karakterleri yere sabitlemek için Y koordinatlarını artırdık (Zemine indirdik)
+const player = { x: 380, y: 380, w: 64, h: 64 }; // Yatakta oturan çocuk
+const mother = { x: 50, y: 330, w: 68, h: 110 }; // Zeminde yürüyen anne
 
 const scenes = [
-    { speaker: "ANNE", text: "Hadi yat artık oğlum, saat çok geç oldu. Işıkları kapatıyorum." },
-    { speaker: "İÇ SES", text: "Bu yatak neden bu kadar rahatsız? Sanki altında bir şeyler kıpırdıyor..." }
+    { speaker: "ANNE", text: "Hadi artık yat oğlum, yarın okulun var." },
+    { speaker: "İÇ SES", text: "Bu yatak da hiç rahat hissettirmiyor..." }
 ];
 
-// KLAVYE ETKİLEŞİMİ
 window.addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 'e') {
         if (gameState === 'dialogue') {
             gameState = 'sleeping';
-            setTimeout(startNightmare, 3000);
+            setTimeout(() => { gameState = 'nightmare'; }, 3000);
         }
     }
 });
 
-function startNightmare() {
-    gameState = 'nightmare';
-}
-
 function drawRoom3D() {
-    // Tavan ve Yer Derinliği
-    ctx.fillStyle = "#0a0a0a"; // Arka duvar
-    ctx.fillRect(100, 100, 600, 300);
+    // Arka Duvar
+    ctx.fillStyle = "#080808";
+    ctx.fillRect(100, 100, 600, 350);
 
-    // Yan Duvarlar (Perspektif)
-    ctx.fillStyle = "#050505";
-    ctx.beginPath(); // Sol duvar
-    ctx.moveTo(0, 0); ctx.lineTo(100, 100); ctx.lineTo(100, 400); ctx.lineTo(0, 600);
+    // Yan Duvarlar
+    ctx.fillStyle = "#040404";
+    ctx.beginPath(); // Sol
+    ctx.moveTo(0, 0); ctx.lineTo(100, 100); ctx.lineTo(100, 450); ctx.lineTo(0, 600);
+    ctx.fill();
+    ctx.beginPath(); // Sağ
+    ctx.moveTo(800, 0); ctx.lineTo(700, 100); ctx.lineTo(700, 450); ctx.lineTo(800, 600);
     ctx.fill();
 
-    ctx.beginPath(); // Sağ duvar (Pencere burada)
-    ctx.moveTo(800, 0); ctx.lineTo(700, 100); ctx.lineTo(700, 400); ctx.lineTo(800, 600);
-    ctx.fill();
-
-    // Yer
-    ctx.fillStyle = "#111";
+    // ZEMİN (Karakterlerin bastığı yer)
+    ctx.fillStyle = "#0c0c0c";
     ctx.beginPath();
-    ctx.moveTo(0, 600); ctx.lineTo(100, 400); ctx.lineTo(700, 400); ctx.lineTo(800, 600);
+    ctx.moveTo(0, 600); ctx.lineTo(100, 450); ctx.lineTo(700, 450); ctx.lineTo(800, 600);
     ctx.fill();
 
-    // Ay Işığı (Pencereden süzülen 3D ışık)
-    ctx.fillStyle = "rgba(100, 100, 255, 0.1)";
+    // DUVARDAN SÜZÜLEN IŞIK (Pencere değil, duvardaki bir yarıktan sızan ışık)
+    ctx.fillStyle = "rgba(200, 200, 255, 0.05)";
     ctx.beginPath();
-    ctx.moveTo(700, 150); ctx.lineTo(400, 550); ctx.lineTo(650, 580); ctx.lineTo(700, 250);
+    ctx.moveTo(700, 120); 
+    ctx.lineTo(300, 580); 
+    ctx.lineTo(600, 580); 
+    ctx.lineTo(700, 300);
     ctx.fill();
-}
-
-function drawMother(x) {
-    // Uzun Anne Figürü (68x110)
-    ctx.fillStyle = "#333"; // Elbise
-    ctx.fillRect(x, mother.y + 30, mother.w, 80);
-    ctx.fillStyle = "#FFE0BD"; // Kafa
-    ctx.fillRect(x + 10, mother.y, 48, 40);
-    ctx.fillStyle = "#221100"; // Saç
-    ctx.fillRect(x + 10, mother.y, 48, 15);
 }
 
 function drawUndertaleBox(text) {
@@ -78,51 +66,39 @@ function drawUndertaleBox(text) {
     ctx.strokeRect(50, 420, 700, 140);
 
     ctx.fillStyle = "white";
-    ctx.font = "20px Courier New";
+    ctx.font = "20px 'Courier New'";
     
-    // Metin Kaydırma (Taşmayı önler)
     const words = text.split(' ');
     let line = '';
-    let y = 460;
+    let y = 470;
     for(let n = 0; n < words.length; n++) {
         let testLine = line + words[n] + ' ';
-        if (ctx.measureText(testLine).width > 650) {
+        if (ctx.measureText(testLine).width > 600) {
             ctx.fillText(line, 80, y);
             line = words[n] + ' ';
             y += 30;
         } else { line = testLine; }
     }
     ctx.fillText(line, 80, y);
-    ctx.font = "12px Courier New";
-    ctx.fillText("[ DEVAM ETMEK İÇİN 'E' ]", 550, 540);
 }
 
 function drawNightmareWorld() {
-    // KOYU MAVİ ARKA PLAN
-    ctx.fillStyle = "#000033";
+    // KOYU MAVİ BOŞLUK
+    ctx.fillStyle = "#000022";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // TIRTIKLI YERLER (Zemin Dokusu)
-    ctx.strokeStyle = "#000066";
-    ctx.lineWidth = 2;
-    for(let i=0; i<canvas.width; i+=20) {
+    // TIRTIKLI ZEMİN (Zigzaglar)
+    ctx.strokeStyle = "#111144";
+    ctx.lineWidth = 3;
+    for(let i = 0; i < canvas.width; i += 40) {
         ctx.beginPath();
-        ctx.moveTo(i, 400);
-        for(let j=0; j<20; j++) {
-            ctx.lineTo(i + (j*2), 400 + (j%2==0 ? 10 : -10));
-        }
+        ctx.moveTo(i, 450);
+        ctx.lineTo(i + 20, 470);
+        ctx.lineTo(i + 40, 450);
         ctx.stroke();
     }
     
-    // Kâbus İfadesi
     drawUndertaleBox(scenes[1].text);
-}
-
-function update() {
-    if (gameState === 'mother_entry') {
-        if (motherPos < 150) motherPos += 2;
-        else gameState = 'dialogue';
-    }
 }
 
 function draw() {
@@ -130,15 +106,21 @@ function draw() {
 
     if (gameState !== 'nightmare') {
         drawRoom3D();
-        // Yatakta kitap okuyan çocuk
-        ctx.fillStyle = "#D4AF37"; ctx.fillRect(player.x, player.y + 20, 64, 44);
-        ctx.fillStyle = "#FFE0BD"; ctx.fillRect(player.x + 15, player.y, 34, 30);
-        
+
+        // YATAK (Zemine yakın)
+        ctx.fillStyle = "#221100";
+        ctx.fillRect(350, 380, 120, 80); 
+        ctx.fillStyle = "#333";
+        ctx.fillRect(355, 385, 110, 40);
+
+        // ÇOCUK (Yatakta oturuyor)
+        ctx.fillStyle = "#D4AF37"; ctx.fillRect(player.x, player.y, player.w, player.h);
+        ctx.fillStyle = "#FFE0BD"; ctx.fillRect(player.x + 15, player.y - 10, 34, 30);
+
         if (gameState === 'mother_entry' || gameState === 'dialogue') {
-            // Açık Kapı Işığı
-            ctx.fillStyle = "#fffae6";
-            ctx.fillRect(0, 200, 100, 250);
-            drawMother(motherPos);
+            // ANNE (Zeminde yürüyor)
+            ctx.fillStyle = "#222"; ctx.fillRect(motherPos, mother.y, mother.w, mother.h);
+            ctx.fillStyle = "#FFE0BD"; ctx.fillRect(motherPos + 10, mother.y - 20, 48, 40);
         }
     }
 
@@ -149,10 +131,20 @@ function draw() {
     if (gameState === 'sleeping') {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "30px 'Courier New'";
+        ctx.fillText("...Zzz...", 350, 300);
     }
 
     if (gameState === 'nightmare') {
         drawNightmareWorld();
+    }
+}
+
+function update() {
+    if (gameState === 'mother_entry') {
+        if (motherPos < 120) motherPos += 3;
+        else gameState = 'dialogue';
     }
 }
 
@@ -166,5 +158,5 @@ playBtn.addEventListener('click', () => {
     menuScreen.style.display = "none";
     canvas.style.display = "block";
     gameLoop();
-    setTimeout(() => { gameState = 'mother_entry'; }, 2000);
+    setTimeout(() => { gameState = 'mother_entry'; }, 1500);
 });
