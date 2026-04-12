@@ -52,3 +52,8 @@ body, html {
     background: #000;
     image-rendering: pixelated; /* Pikseller net görünsün */
 }
+#gameCanvas {
+    border: 10px solid #111;
+    box-shadow: 0 0 50px rgba(0,0,255,0.1);
+    background: #000;
+}
