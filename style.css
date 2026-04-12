@@ -1,116 +1,104 @@
-:root {
-    --foxy-orange: #FF6B6B;
-    --dark-bg: #0d1117;
-    --panel-bg: rgba(22, 27, 34, 0.8);
-    --primary: #FF6B6B;
-}
-
 body, html {
-    margin: 0; padding: 0; height: 100%;
-    background: var(--dark-bg);
+    margin: 0; padding: 0;
+    background: #000;
+    color: #eee;
+    font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
-    color: white;
 }
 
-#stage {
+.vhs-machine {
     position: relative;
-    width: 100vw; height: 100vh;
-    background: radial-gradient(circle, #21262d 0%, #000000 100%);
-}
-
-/* Foxy Karakter Konteyner */
-#foxy {
-    position: absolute;
-    width: 150px; height: 150px;
-    cursor: grab;
+    width: 100vw;
+    height: 100vh;
+    background: #050505;
     z-index: 10;
-    /* Pürüzsüz yön değiştirme */
-    transition: transform 0.2s ease-out;
-    display: flex; align-items: center; justify-content: center;
 }
 
-#foxy:active { cursor: grabbing; }
-
-/* Gerçekçi Tilki Resmi */
-#foxy img {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.7));
-}
-
-/* Düşünce Balonu */
-#thought {
+/* --- BEYAZ PARAZİT ÇİZGİSİ (TRACKING) --- */
+.vhs-tracking {
     position: absolute;
-    bottom: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 10px 15px;
-    border-radius: 15px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #0d1117;
-    opacity: 0;
-    transition: opacity 0.3s;
-    white-space: nowrap;
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    filter: blur(4px);
+    box-shadow: 0 0 15px white;
+    z-index: 5;
+    animation: trackingMove 10s linear infinite;
+}
+
+@keyframes trackingMove {
+    0% { top: -10%; }
+    100% { top: 110%; }
+}
+
+/* Tarama Çizgileri */
+.scanlines {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+    background-size: 100% 3px;
+    z-index: 6;
     pointer-events: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
 }
 
-/* HUD (Heads-Up Display) */
-#hud {
-    position: fixed;
-    top: 25px; left: 25px;
-    background: var(--panel-bg);
-    padding: 20px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 107, 107, 0.3);
-    backdrop-filter: blur(8px);
-    width: 180px;
-    display: none; /* Başlangıçta gizli */
-}
-
-.stat-row { margin-bottom: 15px; }
-.stat-row span { font-size: 11px; font-weight: bold; letter-spacing: 1px; color: #8b949e; }
-
-.bar {
-    width: 100%; height: 8px;
-    background: #21262d;
-    margin-top: 6px;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.fill {
+/* Menü Tasarımı */
+#ui-container {
+    position: relative;
     height: 100%;
-    background: var(--foxy-orange);
-    width: 100%;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
 }
 
-.pro-btn {
-    width: 100%;
-    padding: 10px;
-    background: var(--primary);
-    border: none;
+.vhs-tag {
+    position: absolute;
+    top: 30px; left: 40px;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px red;
+}
+
+.vhs-bottom-tag {
+    position: absolute;
+    bottom: 30px; right: 40px;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.glitch {
+    font-size: 3.5rem;
+    text-align: center;
+    text-shadow: 3px 0 #ff0000, -3px 0 #0000ff;
+    animation: shake 0.3s infinite;
+}
+
+@keyframes shake {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-1px, 1px); }
+    75% { transform: translate(1px, -1px); }
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+button {
+    background: transparent;
     color: white;
-    font-weight: bold;
-    border-radius: 8px;
+    border: 2px solid white;
+    padding: 10px 40px;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    font-size: 11px;
+    transition: 0.2s;
 }
-.pro-btn:hover { background: #ee5253; transform: scale(1.03); }
 
-/* Matrix Yükleyici */
-#loader {
-    position: fixed; inset: 0;
-    background: #000; z-index: 9999;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+button:hover {
+    background: white;
+    color: black;
+    box-shadow: 0 0 20px white;
 }
-.matrix-text { color: var(--primary); font-family: monospace; margin-bottom: 15px; }
-.progress-bar { width: 250px; height: 2px; background: #21262d; }
-#load-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.1s linear; }
