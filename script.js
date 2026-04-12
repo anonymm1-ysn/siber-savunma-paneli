@@ -6,100 +6,105 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 
+// OYUNCU AYARLARI (Senin linkindeki 64x64 karaktere göre uyarlandı)
 const player = {
-    x: 400, y: 300,
-    w: 32, h: 48, // 64x64'e oturacak Frisk benzeri oran
-    speed: 3,
-    color: "#e3c1b4"
+    x: 400,
+    y: 300,
+    w: 64, // Genişlik
+    h: 64, // Yükseklik
+    speed: 4,
+    color: "#FFD700" // Karakterin baskın sarı/altın rengi
 };
+
+// DUVARLAR (Dört tarafı kapatıyoruz ki dışarı çıkıp yok olmasın)
+const walls = [
+    { x: 0, y: 0, w: 800, h: 20 },      // Üst Duvar
+    { x: 0, y: 580, w: 800, h: 20 },    // Alt Duvar
+    { x: 0, y: 0, w: 20, h: 600 },      // Sol Duvar
+    { x: 780, y: 0, w: 20, h: 600 }     // Sağ Duvar
+];
 
 const keys = {};
 window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
-// --- ADIM 1: KORKU KASEDİ SESİ (Synth) ---
+// Korku Müziği (VHS Uğultusu)
 function playHorrorMusic() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Alt katman: Drone (Uğultu)
-    const drone = audioCtx.createOscillator();
-    const droneGain = audioCtx.createGain();
-    drone.type = 'brownian'; // Kahverengi gürültü hissi için pes sawtooth
-    drone.type = 'sawtooth';
-    drone.frequency.setValueAtTime(40, audioCtx.currentTime);
-    droneGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-    
-    // Titreme Efekti (LFO)
-    const lfo = audioCtx.createOscillator();
-    lfo.frequency.setValueAtTime(0.5, audioCtx.currentTime);
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.setValueAtTime(5, audioCtx.currentTime);
-    
-    lfo.connect(lfoGain);
-    lfoGain.connect(drone.frequency);
-    drone.connect(droneGain);
-    droneGain.connect(audioCtx.destination);
-    
-    drone.start();
-    lfo.start();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(45, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
 }
 
-// --- ADIM 2: HAREKET VE DUVAR SİSTEMİ ---
-const wall = { x: 200, y: 150, w: 400, h: 20 }; // Örnek bir duvar
+// ÇARPIŞMA KONTROLÜ (Duvarın içine girmeyi engeller)
+function checkCollision(nextX, nextY) {
+    for (let wall of walls) {
+        if (nextX < wall.x + wall.w &&
+            nextX + player.w > wall.x &&
+            nextY < wall.y + wall.h &&
+            nextY + player.h > wall.y) {
+            return true; // Çarpışma var
+        }
+    }
+    return false; // Yol temiz
+}
 
 function update() {
-    let nextX = player.x;
-    let nextY = player.y;
+    let newX = player.x;
+    let newY = player.y;
 
-    if (keys['w']) nextY -= player.speed;
-    if (keys['s']) nextY += player.speed;
-    if (keys['a']) nextX -= player.speed;
-    if (keys['d']) nextX += player.speed;
+    if (keys['w']) newY -= player.speed;
+    if (keys['s']) newY += player.speed;
+    if (keys['a']) newX -= player.speed;
+    if (keys['d']) newX += player.speed;
 
-    // Duvar Çarpışma Kontrolü (Basit Fizik)
-    if (nextX < wall.x + wall.w && nextX + player.w > wall.x &&
-        nextY < wall.y + wall.h && nextY + player.h > wall.y) {
-        // Çarpışma var! Hareket etme.
-    } else {
-        // Çarpışma yok, pozisyonu güncelle
-        player.x = nextX;
-        player.y = nextY;
+    // Eğer yeni koordinatlarda duvar yoksa hareket et
+    if (!checkCollision(newX, player.y)) {
+        player.x = newX;
+    }
+    if (!checkCollision(player.x, newY)) {
+        player.y = newY;
     }
 }
 
 function draw() {
-    // 1. Zemin (Piksel Arka Plan)
-    ctx.fillStyle = "#0a0a0a";
+    // Karanlık Zemin
+    ctx.fillStyle = "#050505";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Zemin Dokusu (Piksel pikselli bir yer görünümü)
-    ctx.fillStyle = "#0f0f0f";
-    for(let i=0; i<canvas.width; i+=40) {
-        for(let j=0; j<canvas.height; j+=40) {
-            ctx.fillRect(i, j, 38, 38);
-        }
-    }
 
-    // 2. Duvarı Çiz
-    ctx.fillStyle = "#333";
-    ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+    // Duvarları Çiz (Görünür olması için koyu gri)
+    ctx.fillStyle = "#1a1a1a";
+    walls.forEach(w => ctx.fillRect(w.x, w.y, w.w, w.h));
 
-    // 3. PİKSEL KARAKTER (Frisk Tarzı)
-    let px = player.x; let py = player.y;
+    // YENİ PİKSEL KARAKTER ÇİZİMİ (Verdiğin linkteki karaktere benzetildi)
+    let px = player.x; 
+    let py = player.y;
+
+    // Pelerin/Gövde
+    ctx.fillStyle = "#D4AF37"; // Altın sarısı pelerin
+    ctx.fillRect(px + 16, py + 20, 32, 36);
     
-    // Saç/Kafa
-    ctx.fillStyle = "#4d2b1a"; ctx.fillRect(px+4, py, 24, 8); // Saç üst
-    ctx.fillStyle = player.color; ctx.fillRect(px+4, py+8, 24, 16); // Yüz
+    // Kafa
+    ctx.fillStyle = "#FFE0BD"; // Ten rengi
+    ctx.fillRect(px + 20, py + 4, 24, 20);
     
-    // Gözler (Korkmuş çizgiler)
-    ctx.fillStyle = "#000"; ctx.fillRect(px+8, py+14, 4, 2); ctx.fillRect(px+20, py+14, 4, 2);
-    
-    // Kazak (Frisk stili)
-    ctx.fillStyle = "#5e4fa2"; ctx.fillRect(px, py+24, 32, 16); // Mor/Mavi gövde
-    ctx.fillStyle = "#f7941d"; ctx.fillRect(px, py+28, 32, 4); // Şerit
-    
-    // Pantolon/Ayaklar
-    ctx.fillStyle = "#2b2b2b"; ctx.fillRect(px+4, py+40, 24, 8);
+    // Saçlar
+    ctx.fillStyle = "#3E2723"; // Koyu kahve saç
+    ctx.fillRect(px + 20, py, 24, 6);
+
+    // Gözler (Karakterin gizemli bakışı)
+    ctx.fillStyle = "black";
+    ctx.fillRect(px + 26, py + 12, 4, 4);
+    ctx.fillRect(px + 36, py + 12, 4, 4);
+
+    // Gölgelendirme (Pelerin detayı)
+    ctx.fillStyle = "#B8860B";
+    ctx.fillRect(px + 28, py + 24, 8, 30);
 }
 
 function gameLoop() {
