@@ -1,39 +1,55 @@
-const startBtn = document.getElementById('start-btn');
-const exitBtn = document.getElementById('exit-btn');
-const vhsContainer = document.querySelector('.vhs-machine');
+const playBtn = document.getElementById('play-btn');
+const menuScreen = document.getElementById('menu-screen');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-// --- ÇIKIŞ BUTONU ---
-exitBtn.addEventListener('click', () => {
-    // Tarayıcı izin verirse sekmeyi kapatır, vermezse uyarı verir
-    if (confirm("Kasetten çıkmak istiyor musun?")) {
-        window.close();
-        // window.close çalışmazsa (güvenlik nedeniyle) kullanıcıyı gönder:
-        window.location.href = "about:blank"; 
-    }
-});
+canvas.width = 800;
+canvas.height = 600;
 
-// --- OYNAT (BAŞLAT) BUTONU ---
-startBtn.addEventListener('click', () => {
-    // Analog Ses Efekti Başlat (Web Audio API)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(40, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
+// Temel Karakter Bilgileri
+const player = {
+    x: 400,
+    y: 300,
+    size: 40,
+    speed: 5
+};
 
-    // Ekranı Karart ve Oyuna Hazırlan
-    vhsContainer.style.transition = "opacity 1.5s ease-in-out";
-    vhsContainer.style.opacity = "0";
+const keys = {};
 
+// Tuş Takibi
+window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+// PLAY Butonuna Basınca
+playBtn.addEventListener('click', () => {
+    menuScreen.style.opacity = "0";
     setTimeout(() => {
-        vhsContainer.style.display = "none";
-        console.log("Menü kapandı, oyun motoru bekleniyor...");
-        // Bir sonraki adımda buraya oyunun ana fonksiyonunu çağıracağız.
-    }, 1500);
+        menuScreen.style.display = "none";
+        canvas.style.display = "block";
+        gameLoop();
+    }, 1000); // 1 saniye sonra kâbus başlar
 });
+
+function update() {
+    // Temel Yürüme Motoru (W,A,S,D)
+    if (keys['w']) player.y -= player.speed;
+    if (keys['s']) player.y += player.speed;
+    if (keys['a']) player.x -= player.speed;
+    if (keys['d']) player.x += player.speed;
+}
+
+function draw() {
+    // Ekranı temizle
+    ctx.fillStyle = "#050505";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Karakter Temeli (Şimdilik beyaz bir kare)
+    ctx.fillStyle = "white";
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+}
+
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}

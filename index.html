@@ -6,26 +6,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="vhs-machine">
-        <div class="noise"></div>
-        <div class="overlay"></div>
-        <div class="scanlines"></div>
-        <div class="vhs-tracking"></div> <div id="ui-container">
-            <div class="vhs-tag">PLAY ▶<br>00:00:01</div>
-            
-            <div class="menu-box">
-                <h1 class="glitch" data-text="ENDLESS NIGHTMARE">ENDLESS NIGHTMARE I</h1>
-                <div class="button-group">
-                    <button id="start-btn">KASETİ OYNAT [PLAY]</button>
-                    <button id="exit-btn">ÇIK [STOP]</button>
-                </div>
-            </div>
-
-            <div class="vhs-bottom-tag">SP STANDARD MODE</div>
+    <div id="menu-screen" class="vhs-effect">
+        <div class="tracking-line"></div>
+        <div class="ui-content">
+            <h1 class="glitch-title">ENDLESS NIGHTMARE I</h1>
+            <button id="play-btn">PLAY [▶]</button>
         </div>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="gameCanvas" style="display: none;"></canvas>
 
     <script src="script.js"></script>
 </body>

@@ -1,104 +1,55 @@
 body, html {
     margin: 0; padding: 0;
     background: #000;
-    color: #eee;
-    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    font-family: 'Courier New', monospace;
     overflow: hidden;
 }
 
-.vhs-machine {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background: #050505;
-    z-index: 10;
+/* VHS Menü Tasarımı */
+.vhs-effect {
+    position: fixed;
+    width: 100vw; height: 100vh;
+    background: #080808;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 100;
 }
 
-/* --- BEYAZ PARAZİT ÇİZGİSİ (TRACKING) --- */
-.vhs-tracking {
+.tracking-line {
     position: absolute;
-    width: 100%;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.12);
-    filter: blur(4px);
+    width: 100%; height: 10px;
+    background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 15px white;
-    z-index: 5;
-    animation: trackingMove 10s linear infinite;
+    animation: moveLine 8s linear infinite;
 }
 
-@keyframes trackingMove {
+@keyframes moveLine {
     0% { top: -10%; }
     100% { top: 110%; }
 }
 
-/* Tarama Çizgileri */
-.scanlines {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
-    background-size: 100% 3px;
-    z-index: 6;
-    pointer-events: none;
+.glitch-title {
+    font-size: 3rem;
+    text-shadow: 2px 0 red, -2px 0 blue;
+    margin-bottom: 30px;
 }
 
-/* Menü Tasarımı */
-#ui-container {
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
-}
-
-.vhs-tag {
-    position: absolute;
-    top: 30px; left: 40px;
-    font-size: 1.8rem;
-    text-shadow: 2px 2px red;
-}
-
-.vhs-bottom-tag {
-    position: absolute;
-    bottom: 30px; right: 40px;
-    font-size: 1rem;
-    opacity: 0.6;
-}
-
-.glitch {
-    font-size: 3.5rem;
-    text-align: center;
-    text-shadow: 3px 0 #ff0000, -3px 0 #0000ff;
-    animation: shake 0.3s infinite;
-}
-
-@keyframes shake {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(-1px, 1px); }
-    75% { transform: translate(1px, -1px); }
-}
-
-.button-group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-top: 40px;
-}
-
-button {
+#play-btn {
     background: transparent;
     color: white;
     border: 2px solid white;
     padding: 10px 40px;
-    font-size: 1.2rem;
-    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
     cursor: pointer;
-    transition: 0.2s;
 }
 
-button:hover {
-    background: white;
-    color: black;
-    box-shadow: 0 0 20px white;
+#play-btn:hover {
+    background: white; color: black;
+}
+
+/* Oyun Tuvali */
+#gameCanvas {
+    display: block;
+    margin: 0 auto;
+    background: #050505;
 }
