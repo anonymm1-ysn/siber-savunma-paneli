@@ -6,108 +6,83 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 
-// ==========================================
-// 🖼️ PNG YÜKLEME İSTASYONU
-// ==========================================
-const PLAYER_IMAGE_URL = "c:\Users\Administrator\Downloads\New Piskel.png"; 
-const MOTHER_IMAGE_URL = "c:\Users\Administrator\Downloads\New Piskel (1).png";
-
-// Resim Kontrolcüleri
-const playerImg = new Image();
-playerImg.src = PLAYER_IMAGE_URL;
-let playerLoaded = false;
-playerImg.onload = () => playerLoaded = true;
-
-const motherImg = new Image();
-motherImg.src = MOTHER_IMAGE_URL;
-let motherLoaded = false;
-motherImg.onload = () => motherLoaded = true;
-
-// Oyun Değişkenleri
 let gameState = 'intro'; 
 let motherPos = -150;
-const player = { x: 380, y: 380, w: 64, h: 64, speed: 5 };
-const mother = { x: 50, y: 330, w: 75, h: 120 }; // Anneyi biraz daha büyük yaptık
-const monster = { x: 100, y: 100, w: 80, h: 120, active: false };
-let crumbs = [];
+const player = { x: 380, y: 380, w: 40, h: 40, speed: 4 };
+const monster = { x: 50, y: 50, w: 60, h: 90, speed: 2.2, active: false };
+
+// LABİRENT DUVARLARI (Kabus Evreni)
+const mazeWalls = [
+    {x: 200, y: 100, w: 20, h: 300},
+    {x: 400, y: 0, w: 20, h: 250},
+    {x: 400, y: 350, w: 20, h: 250},
+    {x: 600, y: 150, w: 20, h: 300},
+    {x: 200, y: 400, w: 400, h: 20}
+];
 
 const keys = {};
 window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
-// Etkileşim
+// --- KORKUNÇ SES SİSTEMİ ---
+function playHorrorAmbiance() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'brownian'; 
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(30, audioCtx.currentTime); // Çok düşük frekans
+    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start();
+}
+
 window.addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 'e') {
         if (gameState === 'dialogue') {
             gameState = 'sleeping';
-            setTimeout(() => { gameState = 'nightmare_intro'; }, 3000);
+            setTimeout(() => { gameState = 'nightmare_intro'; }, 2000);
         } else if (gameState === 'nightmare_intro') {
-            gameState = 'nightmare_walk';
-            spawnCrumbs();
+            gameState = 'nightmare_run';
+            monster.active = true;
+        } else if (gameState === 'game_over') {
+            location.reload(); // Öldüğünde sayfayı yeniler
         }
     }
 });
 
-function spawnCrumbs() {
-    for(let i=0; i<8; i++) {
-        crumbs.push({ x: Math.random() * 700 + 50, y: Math.random() * 400 + 100 });
+function checkMazeCollision(nextX, nextY) {
+    for (let wall of mazeWalls) {
+        if (nextX < wall.x + wall.w && nextX + player.w > wall.x &&
+            nextY < wall.y + wall.h && nextY + player.h > wall.y) return true;
     }
-}
-
-// Resim Çizdirme Yardımcısı
-function drawSprite(img, loaded, x, y, w, h, fallbackColor) {
-    if (loaded) {
-        ctx.drawImage(img, x, y, w, h);
-    } else {
-        ctx.fillStyle = fallbackColor;
-        ctx.fillRect(x, y, w, h);
-    }
-}
-
-function drawUndertaleBox(text) {
-    ctx.fillStyle = "black";
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 4;
-    ctx.fillRect(50, 420, 700, 140);
-    ctx.strokeRect(50, 420, 700, 140);
-    ctx.fillStyle = "white";
-    ctx.font = "20px 'Courier New'";
-    
-    const words = text.split(' ');
-    let line = ''; let lineY = 470;
-    for(let n = 0; n < words.length; n++) {
-        if (ctx.measureText(line + words[n]).width > 600) {
-            ctx.fillText(line, 80, lineY);
-            line = words[n] + ' '; lineY += 30;
-        } else { line += words[n] + ' '; }
-    }
-    ctx.fillText(line, 80, lineY);
-    ctx.font = "12px 'Courier New'";
-    ctx.fillText("[E - DEVAM ET]", 600, 540);
+    return false;
 }
 
 function update() {
     if (gameState === 'mother_entry') {
-        if (motherPos < 120) motherPos += 3;
-        else gameState = 'dialogue';
+        if (motherPos < 120) motherPos += 2; else gameState = 'dialogue';
     }
     
-    if (gameState === 'nightmare_walk') {
-        if (keys['w']) player.y -= player.speed;
-        if (keys['s']) player.y += player.speed;
-        if (keys['a']) player.x -= player.speed;
-        if (keys['d']) player.x += player.speed;
+    if (gameState === 'nightmare_run') {
+        let nextX = player.x;
+        let nextY = player.y;
 
-        crumbs = crumbs.filter(c => {
-            let dist = Math.hypot(c.x - player.x, c.y - player.y);
-            if(dist < 50) { monster.active = true; return false; }
-            return true;
-        });
+        if (keys['w']) nextY -= player.speed;
+        if (keys['s']) nextY += player.speed;
+        if (keys['a']) nextX -= player.speed;
+        if (keys['d']) nextX += player.speed;
 
-        if (monster.active) {
-            monster.x += (player.x - monster.x) * 0.01;
-            monster.y += (player.y - monster.y) * 0.01;
-        }
+        if (!checkMazeCollision(nextX, player.y)) player.x = nextX;
+        if (!checkMazeCollision(player.x, nextY)) player.y = nextY;
+
+        // CANAVAR TAKİBİ
+        monster.x += (player.x - monster.x) * 0.015;
+        monster.y += (player.y - monster.y) * 0.015;
+
+        // ÖLÜM KONTROLÜ
+        let dist = Math.hypot(monster.x - player.x, monster.y - player.y);
+        if (dist < 40) gameState = 'game_over';
     }
 }
 
@@ -115,53 +90,62 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (gameState === 'intro' || gameState === 'mother_entry' || gameState === 'dialogue') {
-        // ODA
-        ctx.fillStyle = "#080808"; ctx.fillRect(100, 100, 600, 350);
-        ctx.fillStyle = "#0c0c0c"; ctx.beginPath(); ctx.moveTo(0, 600); ctx.lineTo(100, 450); ctx.lineTo(700, 450); ctx.lineTo(800, 600); ctx.fill();
-        
-        // YATAK VE ÇOCUK
-        ctx.fillStyle = "#221100"; ctx.fillRect(350, 380, 120, 80); 
-        drawSprite(playerImg, playerLoaded, player.x, player.y, player.w, player.h, "#D4AF37");
-
+        // ODA ÇİZİMİ
+        ctx.fillStyle = "#050505"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#111"; ctx.fillRect(350, 380, 120, 80); // Yatak
+        ctx.fillStyle = "#D4AF37"; ctx.fillRect(player.x, player.y, 40, 40); // Çocuk
         if (gameState !== 'intro') {
-            // ANNE
-            drawSprite(motherImg, motherLoaded, motherPos, mother.y, mother.w, mother.h, "#222");
+            ctx.fillStyle = "#222"; ctx.fillRect(motherPos, 330, 50, 100); // Anne
         }
     }
 
-    if (gameState === 'dialogue') drawUndertaleBox("Hadi artık yat oğlum, yarın okulun var.");
+    if (gameState === 'dialogue') drawBox("ANNE: Hadi yat artık, yarın okulun var.");
 
-    if (gameState === 'nightmare_intro' || gameState === 'nightmare_walk') {
-        ctx.fillStyle = "#000022"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        // Tırtıklı zemin
-        ctx.strokeStyle = "#111144"; ctx.lineWidth = 3;
-        for(let i=0; i<800; i+=40) { ctx.beginPath(); ctx.moveTo(i, 450); ctx.lineTo(i+20, 470); ctx.lineTo(i+40, 450); ctx.stroke(); }
+    if (gameState === 'nightmare_intro' || gameState === 'nightmare_run') {
+        // KABUS DÜNYASI (Daha Karanlık)
+        ctx.fillStyle = "#000011"; ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Kırıntılar
-        ctx.fillStyle = "#d2b48c";
-        crumbs.forEach(c => ctx.fillRect(c.x, c.y, 8, 8));
+        // Labirent Duvarları
+        ctx.fillStyle = "#000044";
+        mazeWalls.forEach(w => ctx.fillRect(w.x, w.y, w.w, w.h));
 
-        drawSprite(playerImg, playerLoaded, player.x, player.y, player.w, player.h, "#D4AF37");
+        // Çocuk
+        ctx.fillStyle = "#D4AF37"; ctx.fillRect(player.x, player.y, 32, 32);
 
-        if (monster.active) {
-            ctx.fillStyle = "black"; ctx.fillRect(monster.x, monster.y, monster.w, monster.h);
-            ctx.fillStyle = "red"; ctx.fillRect(monster.x+20, monster.y+20, 10, 10); ctx.fillRect(monster.x+50, monster.y+20, 10, 10);
-        }
+        // CANAVAR (Daha Ürkütücü)
+        ctx.fillStyle = "black";
+        ctx.fillRect(monster.x, monster.y, monster.w, monster.h);
+        // Titreyen Kırmızı Gözler
+        ctx.fillStyle = "red";
+        ctx.fillRect(monster.x + 15 + Math.random()*2, monster.y + 20, 8, 8);
+        ctx.fillRect(monster.x + 35 + Math.random()*2, monster.y + 20, 8, 8);
         
-        if (gameState === 'nightmare_intro') drawUndertaleBox("Bu yatak hiç rahat değil... Sanki her yer kırıntı.");
+        if (gameState === 'nightmare_intro') drawBox("...bu yatak rahat değil... bir şeyler yaklaşıyor...");
     }
 
-    if (gameState === 'sleeping') {
-        ctx.fillStyle = "black"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white"; ctx.font = "30px Courier"; ctx.fillText("...Zzz...", 350, 300);
+    if (gameState === 'game_over') {
+        ctx.fillStyle = "black"; ctx.fillRect(0,0,800,600);
+        ctx.fillStyle = "red"; ctx.font = "50px Courier New";
+        ctx.fillText("YATAĞIN ALTINDAYIM", 150, 300);
+        ctx.font = "20px Courier New";
+        ctx.fillText("TEKRAR DENEMEK İÇİN 'E' BAS", 250, 360);
     }
+}
+
+function drawBox(text) {
+    ctx.fillStyle = "black"; ctx.strokeStyle = "white"; ctx.lineWidth = 3;
+    ctx.fillRect(50, 450, 700, 100); ctx.strokeRect(50, 450, 700, 100);
+    ctx.fillStyle = "white"; ctx.font = "18px Courier New";
+    ctx.fillText(text, 80, 500);
+    ctx.font = "12px Courier New"; ctx.fillText("[E]", 680, 530);
 }
 
 function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
 
 playBtn.addEventListener('click', () => {
+    playHorrorAmbiance();
     menuScreen.style.display = "none";
     canvas.style.display = "block";
     gameLoop();
-    setTimeout(() => { if(gameState==='intro') gameState='mother_entry'; }, 1500);
+    setTimeout(() => { if(gameState==='intro') gameState='mother_entry'; }, 1000);
 });
