@@ -1,12 +1,41 @@
-<header>
-    <div class="status-online"></div>
-    <h1>ARCHIMEDES</h1>
-    <div class="settings-menu">
-        <button class="settings-btn">⚙️</button>
-        <div class="dropdown-content">
-            <a href="#" onclick="modDegistir('resmi')">Resmi Dil</a>
-            <a href="#" onclick="modDegistir('cok_resmi')">Çok Resmi</a>
-            <a href="#" onclick="modDegistir('kanka')">Kanka Modu</a>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHIMEDES AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="header-left">
+                <div class="status-online"></div>
+                <h1>ARCHIMEDES</h1>
+            </div>
+            
+            <div class="settings-menu">
+                <button class="settings-btn">⚙️</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="modDegistir('resmi')">Resmi Dil</a>
+                    <a href="#" onclick="modDegistir('cok_resmi')">Çok Resmi</a>
+                    <a href="#" onclick="modDegistir('kanka')">Kanka Modu</a>
+                </div>
+            </div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg bot">Merhaba! ARCHIMEDES sistemine hoş geldiniz. Hangi modda konuşmak istersiniz? ✨</div>
+        </div>
+        
+        <div class="input-wrapper">
+            <div class="glass-input">
+                <input type="text" id="user-input" placeholder="Bir şeyler sor..." autocomplete="off">
+                <button id="send-btn">➤</button>
+            </div>
         </div>
     </div>
-</header>
+    <script src="script.js"></script>
+</body>
+</html>
