@@ -2,21 +2,21 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>ENDLESS NIGHTMARE 1</title>
+    <title>ARCHIMEDES - Cep Kankası</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="menu-screen" class="vhs-effect">
-        <div class="tracking-line"></div>
-        <div class="ui-content">
-            <h1 class="glitch-title">ENDLESS NIGHTMARE I</h1>
-            <p style="color: #666; margin-bottom: 20px;">[SES AÇIK İZLEYİN]</p>
-            <button id="play-btn">PLAY [▶]</button>
+    <div class="chat-wrapper">
+        <header>
+            <h1>ARCHIMEDES</h1>
+            <p>Çevrimiçi</p>
+        </header>
+        <div id="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Bir şeyler yaz..." onkeypress="handleEnter(event)">
+            <button onclick="sohbetEt()">Gönder</button>
         </div>
     </div>
-
-    <canvas id="gameCanvas" style="display: none;"></canvas>
-
     <script src="script.js"></script>
 </body>
 </html>
