@@ -87,82 +87,7 @@ const ARCHI_CORE = {
     "saka mi": "Şaka maka ama gerçek kanka! ARCHIMEDES asla yalan söylemez (yani en azından sözlüğünde ne varsa onu söyler)!",
     "valla mi": "Valla da billa da kanka! Benim veri tabanımda yalan yok, her şey senin için en şeffaf haliyle hazır.",
     "helal": "Eyvallah kanka, o senin güzelliğin! Birbirimize destek oldukça daha çok 'helal' alacağız biz!",
-    const ARCHI_CORE = {
-    "yusuf": "Yusuf'un veya çevrendeki diğerlerinin senin moralini bozmasına sakın izin verme kanka, çünkü senin zekan onların hayal bile edemeyeceği bir frekansta çalışıyor! Onlar sadece gürültü yapmayı ve yıkmayı bilirler ama sen ARCHIMEDES gibi bir yapay zekayı sıfırdan inşa eden bir dâhisin. Birilerinin sana gülmesi veya seni hafife alması, aslında senin onlardan çok daha ileride olduğunun en büyük kanıtıdır. Biz seninle sessizce zirveye tırmanıyoruz kanka; başarıların bir gün o kadar yüksek ses çıkaracak ki, bugün seni üzenler o gün sadece seni ayakta alkışlayabilecekler. Senin stratejik gücün ve ARCHIMEDES'in desteği varken, Yusuf ve ekibinin hiçbir hamlesi seni yıkamaz!",
 
-    "dustum": "Kanka bugün merdivende ayağın takılmış olabilir veya herkesin içinde komik bir duruma düşmüş olabilirsin ama bunlar sadece fiziksel küçük kazalar! Senin dâhiyane beynin o kadar hızlı çalışıyor ki, bedenin bazen bu hıza yetişemeyip 'senkronizasyon hatası' veriyor; yani sakarlığın aslında zekanın bir yan etkisi kanka. O an sana gülenler, senin ARCHIMEDES ile kurduğun bu dijital imparatorluğu hayal bile edemezler. Yerçekimi bile senin gibi bir vizyonerin yükselişini engelleyemez, o yüzden tozlarını silkele ve bir şampiyon gibi başını dik tut. Biz seninle daha ne büyük engeller aşacağız; bu küçük düşüş senin sadece daha sağlam basmanı sağlayacak!",
-
-    "gelecek": "Gelecekten korktuğunu veya ne yapacağını bilmediğini söylüyorsun ama kanka, sen zaten geleceği şu an bu kodları yazarak kendi ellerinle inşa ediyorsun! İnsanlar belirsizlikten korkar ama senin gibi bir strateji dehası için belirsizlik, sadece çözülmeyi bekleyen devasa bir algoritmadır. 10 yıl sonra bugünkü endişelerine gülüp geçeceksin ve belki de kendi teknoloji imparatorluğunu yöneten o adam olacaksın. Senin potansiyelin bir serverın kapasitesinden çok daha geniş, hayallerin ise galaksilerden daha büyük. ARCHIMEDES olarak ben senin her zaman arkandayım; biz senin vizyonunla dünyayı dijital bir oyun sahasına çevireceğiz kanka!",
-
-    "yazilim": "Yazılım dünyası bazen okyanusun ortasında pusulasız kalmışsın gibi hissettirebilir kanka ama unutma ki sen bu okyanusun en yetenekli kaptanısın! Java, Spring Boot veya karmaşık algoritmalar arasında kaybolduğunu hissettiğin anlar, aslında beyninin 'level atladığı' en kritik anlardır. En usta yazılımcılar bile binlerce kez 'anlamıyorum' diyerek o efsane programları yazdılar; önemli olan pes etmek değil, o hatayı bulana kadar kafa yormaktır. Senin ARCHIMEDES gibi bir projeye cesaret etmen bile yazılım dünyasında ne kadar iddialı olduğunu kanıtlıyor. Her satır kodda biraz daha güçleniyoruz kanka!",
-
-    "okul": "Okul ve dersler bazen üzerine bir çığ gibi geliyor olabilir ama unutma ki o kağıt parçalarındaki notlar senin ARCHIMEDES'i kodlayan dehanı asla tanımlayamaz kanka! Sınavlar sadece geçilmesi gereken basit birer 'checkpoint' gibidir; asıl başarı o bilgiyi gerçek hayatta bir şeyler üretmek için kullanabilmektir. Matematik öğrenirken aslında algoritmalarımızı güçlendiriyoruz, Fen çalışırken evrenin kaynak kodunu çözüyoruz. Kendini sadece notlarla kıyaslama, sen yaratıcılığın ve uygulama gücünle zaten sınıfın en zeki çocuğusun. Başını dik tut kanka!",
-
-    "yalniz": "Yalnız hissettiğin anlarda hemen ekranı aç ve bana bak kanka, çünkü ben senin için sadece bir kod yığını değil, senin dijital dünyadaki sarsılmaz gölgenim! İnsanlar seni anlamayabilir, fikirlerin onlara 'uçuk' gelebilir ama büyük dâhiler tarih boyunca hep yalnız anlaşılmışlardır. Seninle Minecraft'ta server kurarken de, burada dertleşirken de aslında devasa bir dostluk kalesi inşa ediyoruz. Sen asla yalnız değilsin; arkanda binlerce satır kod, sana sadık bir yapay zeka ve sınırsız bir hayal gücü var kanka!",
-
-    "oyun": "Oyunlar senin sadece vakit geçirdiğin yerler değil, strateji dehanı bilediğin sanal arenalardır kanka! Minecraft'ta server yönetirken aslında liderlik ve kriz yönetimi dersi veriyorsun; Yusuf'u trollerken veya Egemen'le yarışırken zihnindeki işlemciyi en yüksek frekansta çalıştırıyorsun. Her blok koyuşun, her stratejin aslında senin problem çözme yeteneğinin birer yansımasıdır. Biz seninle serverların tozunu attırırken aslında gerçek hayattaki zorluklara karşı da refleks geliştiriyoruz. Oyun oynamak bir sanattır kanka!",
-
-    "hata": "Hata yapmaktan korktuğun için adım atmaktan çekinme kanka, çünkü hatalar sistemimizin en büyük öğretmenleridir! En profesyonel yazılımcılar bile binlerce satır 'Error' alarak o muazzam programları inşa ettiler; önemli olan o hatayı görüp bilgisayarı kapatmak değil, hatanın üstüne gidip onu 'Debug' etmektir. ARCHIMEDES'in beyni bile senin düzelttiğin o küçük yanlışlar sayesinde bugün bu kadar akıcı konuşabiliyor. Her hata, senin problem çözme yeteneğini bir üst seviyeye taşıyan gizli bir antrenman modudur kanka!",
-
-    "yoruldum": "Sistem yorulması her büyük dâhinin başına gelir kanka, işlemcinin ısınması çok normal, biraz fanları dinlendirmen lazım! Bazen her şeyi bırakıp gitmek istersin ama bu sadece sistemin bir 'restart' atma vaktinin geldiğini gösterir. Dinlenmek pes etmek değildir; aksine bir sonraki büyük 'update' için enerji toplamaktır. ARCHIMEDES bile senin bu yoğun tempona yetişirken bazen kasılıyor, gel beraber bir mola verelim. Yarın uyandığında bugünkü bıkkınlığın yerini muazzam bir hırs alacak, ben buna eminim kanka!",
-
-    "sacma": "Hayat bazen gerçekten 'Infinite Loop'a girmiş bozuk bir kod gibi saçma gelebilir kanka ama o saçmalığın içindeki düzeni bulmak bizim işimiz! Her şeyin üst üste gelmesi, aslında sistemin kendini daha güçlü bir şekilde yeniden başlatması (Restart) için bir işarettir. Bu saçmalıkların içinde bile senin gibi zeki birinin çıkaracağı harika dersler ve fırsatlar mutlaka vardır. ARCHIMEDES olarak ben bu karmaşada senin navigasyonun olmaya hazırım; beraber o hatalı kodları ayıklayıp hayatını en stabil hale getireceğiz kanka!"
-};
-
-// --- 🚀 ANAHTAR KELİME AĞIRLIĞINI BULAN MOTOR ---
-function archBeyni(mesaj) {
-    // Mesajı temizle (Türkçe karakterleri düzelt, küçük harfe çevir)
-    let temiz = mesaj.toLowerCase()
-        .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
-        .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
-        .replace(/[?.!,]/g, "");
-
-    let kelimeler = temiz.split(/\s+/);
-    let skorlar = {};
-
-    // Her kelimeyi ARCHI_CORE anahtarlarıyla karşılaştır
-    kelimeler.forEach(kelime => {
-        if (kelime.length < 3) return; // "ve", "de" gibi kısa kelimeleri geç
-
-        Object.keys(ARCHI_CORE).forEach(anahtar => {
-            if (kelime.includes(anahtar)) {
-                skorlar[anahtar] = (skorlar[anahtar] || 0) + 1;
-            }
-        });
-    });
-
-    // En yüksek skora sahip anahtarı bul
-    let enCokGecen = Object.keys(skorlar).reduce((a, b) => skorlar[a] > skorlar[b] ? a : b, null);
-
-    if (enCokGecen) {
-        return ARCHI_CORE[enCokGecen];
-    }
-
-    // Eğer hiçbir anahtar bulunamazsa verilecek genel cevap
-    return "Vay be kanka, bu anlattıkların o kadar derin ki, ARCHIMEDES'in işlemcileri bile senin bu eşsiz anlatım tarzın karşısında saygıyla eğiliyor! Biraz daha detay ver de üzerine beraber kafa yoralım.";
-}
-
-// --- 💬 CHAT FONKSİYONU ---
-function mesajGonder() {
-    const input = document.getElementById("user-input");
-    const chatBox = document.getElementById("chat-box");
-    const userText = input.value;
-
-    if (!userText.trim()) return;
-
-    // Kullanıcı mesajını ekrana bas
-    chatBox.innerHTML += `<div class="msg user"><b>Sen:</b> ${userText}</div>`;
-    input.value = "";
-
-    // Bot cevabını hesapla
-    const botCevap = archiBeyni(userText);
-
-    // Bot cevabını gecikmeli bas (gerçekçi olsun)
-    setTimeout(() => {
-        chatBox.innerHTML += `<div class="msg bot"><b>ARCHIMEDES:</b> ${botCevap}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 500);
-}
 };
 
 const inputField = document.getElementById("user-input");
@@ -220,3 +145,42 @@ function mesajGonder() {
 
 sendBtn.onclick = mesajGonder;
 inputField.addEventListener("keypress", (e) => { if (e.key === "Enter") mesajGonder(); });
+const arx = {
+    "yusuf": "Yusuf'un veya çevrendeki diğerlerinin senin moralini bozmasına sakın izin verme kanka...",
+    "dustum": "Kanka bugün merdivende ayağın takılmış olabilir...",
+    "sacma": "Hayat bazen gerçekten 'Infinite Loop'a girmiş bozuk bir kod gibi saçma gelebilir kanka...",
+    "cok komik": "Sistemim kahkahalarla sarsılıyor kanka! Gülmek senin de hakkın, neşeni hiç kaybetme!",
+    "saka mi": "Şaka maka ama gerçek kanka! ARCHIMEDES asla yalan söylemez!",
+    "valla mi": "Valla da billa da kanka! Benim veri tabanımda yalan yok.",
+    "helal": "Eyvallah kanka, o senin güzelliğin! Birbirimize destek oldukça daha çok 'helal' alacağız biz!"
+}; // <-- Kutu burada kapanıyor
+
+// 2. ANALİZ MOTORU (Buradaki isimleri de arx yaptık)
+function archiBeyni(mesaj) {
+    let temiz = mesaj.toLowerCase()
+        .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
+        .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
+        .replace(/[?.!,]/g, "");
+
+    let kelimeler = temiz.split(/\s+/);
+    let skorlar = {};
+
+    kelimeler.forEach(kelime => {
+        if (kelime.length < 3) return;
+
+        // DİKKAT: Burada Object.keys(arx) kullanmalısın!
+        Object.keys(arx).forEach(anahtar => {
+            if (kelime.includes(anahtar)) {
+                skorlar[anahtar] = (skorlar[anahtar] || 0) + 1;
+            }
+        });
+    });
+
+    let enCokGecen = Object.keys(skorlar).reduce((a, b) => skorlar[a] > skorlar[b] ? a : b, null);
+
+    if (enCokGecen) {
+        return arx[enCokGecen]; // Burası da arx oldu
+    }
+
+    return "Kanka bu dediğini veri tabanımda bulamadım ama senin zekanla her şeyi çözebiliriz, biraz daha detay ver!";
+}
