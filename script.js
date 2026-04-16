@@ -117,6 +117,27 @@ function aiBeyni(mesaj) {
 }
 
 function mesajGonder() {
+    const input = document.getElementById("user-input");
+    const chatBox = document.getElementById("chat-box");
+    const userText = input.value;
+
+    if (!userText.trim()) return;
+
+    chatBox.innerHTML += `<div class="msg user"><b>Sen:</b> ${userText}</div>`;
+    input.value = "";
+
+    // Bot cevabını arx listesinden buluyoruz
+    const botCevap = archiBeyni(userText);
+
+    setTimeout(() => {
+        chatBox.innerHTML += `<div class="msg bot"><b>ARX:</b> ${botCevap}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // --- İŞTE BURASI: Bot cevabı ekrana yazılınca sesli oku ---
+        sesliOku(botCevap); 
+        
+    }, 500);
+}
     const raw = inputField.value;
     if (raw.trim() === "") return;
 
@@ -141,7 +162,7 @@ function mesajGonder() {
         chatBox.innerHTML += `<div class="msg bot"><b>ARCHIMEDES:</b> ${cevap}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }, 450);
-}
+
 
 sendBtn.onclick = mesajGonder;
 inputField.addEventListener("keypress", (e) => { if (e.key === "Enter") mesajGonder(); });
@@ -183,4 +204,20 @@ function archiBeyni(mesaj) {
     }
 
     return "Kanka bu dediğini veri tabanımda bulamadım ama senin zekanla her şeyi çözebiliriz, biraz daha detay ver!";
+}
+function sesliOku(metin) {
+    // Eğer tarayıcıda halihazırda konuşan bir ses varsa durdur (üst üste binmesin)
+    window.speechSynthesis.cancel();
+
+    const konusmaci = new SpeechSynthesisUtterance(metin);
+    
+    // Dil ayarı (Türkçe olması için şart)
+    konusmaci.lang = 'tr-TR';
+    
+    // Ses tonu ve hız ayarı (Kanka tarzı için biraz hızlı ve karizmatik)
+    konusmaci.pitch = 1.0; // Ses inceliği (0-2 arası)
+    konusmaci.rate = 1.1;  // Konuşma hızı (Daha doğal durması için 1.1 ideal)
+
+    // Konuşmayı başlat
+    window.speechSynthesis.speak(konusmaci);
 }
