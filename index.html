@@ -2,19 +2,18 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>ARCHIMEDES - Cep Kankası</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCHIMEDES FULLSCREEN</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="chat-wrapper">
-        <header>
-            <h1>ARCHIMEDES</h1>
-            <p>Çevrimiçi</p>
-        </header>
-        <div id="chat-box"></div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Bir şeyler yaz..." onkeypress="handleEnter(event)">
-            <button onclick="sohbetEt()">Gönder</button>
+    <div class="main-container">
+        <div id="chat-box">
+            </div>
+        
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="ARCHIMEDES ile konuş..." autocomplete="off">
+            <button id="send-btn">GÖNDER</button>
         </div>
     </div>
     <script src="script.js"></script>
