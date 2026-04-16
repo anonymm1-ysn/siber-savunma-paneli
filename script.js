@@ -166,7 +166,11 @@ function mesajGonder() {
     }, 450);
 }
 
-sendBtn.addEventListener("click", mesajGonder);
-inputField.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") mesajGonder();
-});
+sendBtn.onclick = mesajGonder;
+
+// Enter Tuşuna Basma
+inputField.onkeypress = function(e) {
+    if (e.key === "Enter") {
+        mesajGonder();
+    }
+};
