@@ -2,113 +2,231 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Kuş Birleştirme - Beta 0.0.0.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuş Birleştirme - Beta 0.1</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #e0f7fa; display: flex; flex-direction: column; align-items: center; }
-        #game-container { width: 400px; height: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 4px solid #4fc3f7; margin-top: 20px; }
-        #egg-button { background: #ffccbc; border: none; padding: 15px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 20px; }
-        #egg-button:hover { background: #ffab91; transform: scale(1.05); }
-        .bird { width: 60px; height: 60px; position: absolute; cursor: grab; display: flex; align-items: center; justify-content: center; font-size: 30px; user-select: none; transition: transform 0.1s; }
-        .stats { margin-top: 10px; font-size: 18px; color: #0277bd; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Arial', sans-serif; }
+        
+        /* ARKA PLAN */
+        #game-canvas {
+            width: 100vw;
+            height: 100vh;
+            background: url('https://i.imgur.com/3YQ6Y2M.png') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* ÜST PANEL (UI) */
+        .ui { position: absolute; color: white; text-shadow: 2px 2px 4px #000; z-index: 100; font-weight: bold; }
+        #gold-ui { top: 20px; left: 20px; font-size: 24px; color: #ffd700; }
+        #timer-ui { top: 20px; right: 20px; text-align: right; font-size: 18px; }
+
+        /* YUVALARIN DURACAĞI DALLAR */
+        .branch-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .nest {
+            width: 110px;
+            height: 70px;
+            position: absolute;
+            background: url('https://i.imgur.com/KxJ6w5N.png') no-repeat center bottom;
+            background-size: contain;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.2s;
+        }
+
+        .nest:hover { transform: scale(1.05); }
+
+        /* KUŞLAR */
+        .bird {
+            width: 70px;
+            height: 70px;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.1s;
+            z-index: 50;
+        }
+
+        .bird:active { cursor: grabbing; transform: scale(1.2); }
+
+        /* ZİYARETÇİ VE AKSİYONLAR */
+        #visitor {
+            position: absolute;
+            top: -100px;
+            width: 100px;
+            height: 100px;
+            background: url('https://i.imgur.com/A6uC2xY.png') no-repeat center;
+            background-size: contain;
+            transition: all 3s ease-in-out;
+            z-index: 80;
+        }
+
+        #buy-nest-btn {
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            background: #4caf50;
+            border: 3px solid #2e7d32;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        #buy-nest-btn:disabled { background: #9e9e9e; border-color: #757575; cursor: not-allowed; }
+
     </style>
 </head>
 <body>
 
-    <h1>Kuş Birleştirme (Beta 0.0.0.1)</h1>
-    <div class="stats">Toplanan Yumurta: <span id="egg-count">0</span></div>
+<div id="game-canvas">
+    <div id="gold-ui" class="ui">Altın: <span id="gold">120</span> 💰</div>
+    <div id="timer-ui" class="ui">Ziyaretçi: <span id="timer">04:00</span></div>
     
-    <div id="game-container">
+    <div id="visitor"></div>
+
+    <div class="branch-container" id="nests-wrapper">
         </div>
 
-    <button id="egg-button">Ziyaretçi Kuşun Yumurtasını Topla!</button>
+    <button id="buy-nest-btn">Yeni Yuva Al (100 Altın)</button>
+</div>
 
-    <script>
-        const container = document.getElementById('game-container');
-        const eggCountSpan = document.getElementById('egg-count');
-        const eggButton = document.getElementById('egg-button');
+<script>
+    let gold = 120;
+    let timerSeconds = 240; // 4 Dakika
+    let nests = [
+        { id: 0, x: 20, y: 40, birdLevel: 1 }, // Başlangıç yuvası ve kuşu
+        { id: 1, x: 50, y: 30, birdLevel: 0 }, // Boş yuva
+        { id: 2, x: 75, y: 45, birdLevel: 0 }  // Boş yuva
+    ];
 
-        let eggs = 0;
-        let birds = [];
+    const birdIcons = {
+        1: "https://i.imgur.com/Q2rR3hS.png", // Muhabbet
+        2: "https://i.imgur.com/K7R6YpZ.png", // Sultan
+        3: "https://i.imgur.com/J3T6G2q.png", // Cennet
+        4: "https://i.imgur.com/o5X7y6j.png"  // Gizemli Kuş (Yumurta simgesiyle aynı level)
+    };
+
+    function init() {
+        drawNests();
+        startTimer();
+        document.getElementById('buy-nest-btn').onclick = buyNest;
+    }
+
+    function drawNests() {
+        const wrapper = document.getElementById('nests-wrapper');
+        wrapper.innerHTML = '';
+        nests.forEach((nest, index) => {
+            const nestDiv = document.createElement('div');
+            nestDiv.className = 'nest';
+            nestDiv.style.left = nest.x + '%';
+            nestDiv.style.top = nest.y + '%';
+            nestDiv.on换 = (e) => e.preventDefault();
+
+            if (nest.birdLevel > 0) {
+                const birdImg = document.createElement('img');
+                birdImg.src = birdIcons[nest.birdLevel];
+                birdImg.className = 'bird';
+                birdImg.draggable = true;
+                birdImg.dataset.index = index;
+                
+                // Merge (Birleştirme) Olayları
+                birdImg.ondragstart = (e) => e.dataTransfer.setData("text", index);
+                nestDiv.ondragover = (e) => e.preventDefault();
+                nestDiv.ondrop = (e) => {
+                    const fromIndex = e.dataTransfer.getData("text");
+                    handleMerge(parseInt(fromIndex), index);
+                };
+
+                nestDiv.appendChild(birdImg);
+            } else {
+                // Boş yuvaya da kuş bırakılabilir
+                nestDiv.ondragover = (e) => e.preventDefault();
+                nestDiv.ondrop = (e) => {
+                    const fromIndex = e.dataTransfer.getData("text");
+                    moveBird(parseInt(fromIndex), index);
+                };
+            }
+
+            wrapper.appendChild(nestDiv);
+        });
+        document.getElementById('gold').innerText = gold;
+    }
+
+    function handleMerge(fromIdx, toIdx) {
+        if (fromIdx === toIdx) return;
         
-        // Kuş Türleri (Level'a göre emojiler veya görseller)
-        const birdTypes = {
-            1: { name: "Muhabbet Kuşu", icon: "🦜" },
-            2: { name: "Sultan Papağanı", icon: "🐤" },
-            3: { name: "Cennet Papağanı", icon: "🐦" },
-            4: { name: "Kakadu", icon: "🕊️" },
-            5: { name: "Anka", icon: "🔥" }
-        };
+        const fromBird = nests[fromIdx];
+        const toBird = nests[toIdx];
 
-        eggButton.onclick = () => {
-            eggs++;
-            eggCountSpan.innerText = eggs;
-            createBird(1); // İlk seviye kuş oluştur
-        };
-
-        function createBird(level) {
-            const bird = document.createElement('div');
-            bird.className = 'bird';
-            bird.innerText = birdTypes[level].icon;
-            bird.dataset.level = level;
-            
-            // Rastgele pozisyon
-            bird.style.left = Math.random() * (container.clientWidth - 60) + 'px';
-            bird.style.top = Math.random() * (container.clientHeight - 60) + 'px';
-
-            makeDraggable(bird);
-            container.appendChild(bird);
-            birds.push(bird);
+        if (fromBird.birdLevel === toBird.birdLevel && fromBird.birdLevel < 4) {
+            nests[toIdx].birdLevel += 1;
+            nests[fromIdx].birdLevel = 0;
+            gold += 10; // Birleştirme ödülü
+        } else if (toBird.birdLevel === 0) {
+            moveBird(fromIdx, toIdx);
         }
+        drawNests();
+    }
 
-        function makeDraggable(el) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            el.onmousedown = dragMouseDown;
+    function moveBird(fromIdx, toIdx) {
+        nests[toIdx].birdLevel = nests[fromIdx].birdLevel;
+        nests[fromIdx].birdLevel = 0;
+        drawNests();
+    }
 
-            function dragMouseDown(e) {
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
+    function startTimer() {
+        setInterval(() => {
+            timerSeconds--;
+            if (timerSeconds <= 0) {
+                visitorArrival();
+                timerSeconds = 240;
             }
+            updateTimerDisplay();
+        }, 1000);
+    }
 
-            function elementDrag(e) {
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                el.style.top = (el.offsetTop - pos2) + "px";
-                el.style.left = (el.offsetLeft - pos1) + "px";
-            }
+    function updateTimerDisplay() {
+        const m = Math.floor(timerSeconds / 60);
+        const s = timerSeconds % 60;
+        document.getElementById('timer').innerText = 
+            `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                checkMerge(el);
-            }
+    function visitorArrival() {
+        const v = document.getElementById('visitor');
+        v.style.left = "45%";
+        v.style.top = "10%";
+
+        setTimeout(() => {
+            gold += 50; // Ziyaretçi hediyesi
+            v.style.top = "-100px";
+            drawNests();
+        }, 3000);
+    }
+
+    function buyNest() {
+        if (gold >= 100) {
+            gold -= 100;
+            const newX = Math.random() * 70 + 10;
+            const newY = Math.random() * 40 + 20;
+            nests.push({ id: nests.length, x: newX, y: newY, birdLevel: 1 });
+            drawNests();
         }
+    }
 
-        function checkMerge(draggedBird) {
-            birds.forEach(targetBird => {
-                if (draggedBird !== targetBird && isOverlapping(draggedBird, targetBird)) {
-                    if (draggedBird.dataset.level === targetBird.dataset.level) {
-                        let nextLevel = parseInt(draggedBird.dataset.level) + 1;
-                        if (birdTypes[nextLevel]) {
-                            // Birleşme gerçekleşiyor
-                            container.removeChild(draggedBird);
-                            container.removeChild(targetBird);
-                            birds = birds.filter(b => b !== draggedBird && b !== targetBird);
-                            createBird(nextLevel);
-                        }
-                    }
-                }
-            });
-        }
+    init();
+</script>
 
-        function isOverlapping(el1, el2) {
-            const rect1 = el1.getBoundingClientRect();
-            const rect2 = el2.getBoundingClientRect();
-            return !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
-        }
-    </script>
 </body>
 </html>
