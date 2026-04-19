@@ -3,87 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuş Birleştirme - Beta 0.1</title>
+    <title>Kuş Birleştirme - Beta 0.1.1</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Arial', sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
         
-        /* ARKA PLAN */
+        /* MANZARA ARKA PLANI (Kodla Yapıldı) */
         #game-canvas {
             width: 100vw;
             height: 100vh;
-            background: url('https://i.imgur.com/3YQ6Y2M.png') no-repeat center center;
-            background-size: cover;
+            background: linear-gradient(to bottom, #4db6ac 0%, #80cbc4 40%, #cddc39 100%);
             position: relative;
         }
 
-        /* ÜST PANEL (UI) */
-        .ui { position: absolute; color: white; text-shadow: 2px 2px 4px #000; z-index: 100; font-weight: bold; }
-        #gold-ui { top: 20px; left: 20px; font-size: 24px; color: #ffd700; }
-        #timer-ui { top: 20px; right: 20px; text-align: right; font-size: 18px; }
+        /* ÜST PANEL */
+        .ui { position: absolute; color: white; text-shadow: 2px 2px 4px #000; z-index: 100; font-weight: bold; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; margin: 15px; }
+        #gold-ui { top: 10px; left: 10px; font-size: 26px; color: #ffd700; }
+        #timer-ui { top: 10px; right: 10px; text-align: right; font-size: 18px; }
 
-        /* YUVALARIN DURACAĞI DALLAR */
-        .branch-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
+        /* YUVALAR */
         .nest {
             width: 110px;
-            height: 70px;
+            height: 65px;
             position: absolute;
-            background: url('https://i.imgur.com/KxJ6w5N.png') no-repeat center bottom;
-            background-size: contain;
+            background: #8d6e63; /* Yuva kahverengisi */
+            border-radius: 50% 50% 30% 30%;
+            border-bottom: 6px solid #4e342e;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
-            padding-bottom: 20px;
+            align-items: center;
             cursor: pointer;
-            pointer-events: auto;
-            transition: transform 0.2s;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .nest:hover { transform: scale(1.05); }
-
-        /* KUŞLAR */
+        /* KUŞLAR (EMOJİ - ASLA KIRILMAZ) */
         .bird {
-            width: 70px;
-            height: 70px;
+            font-size: 55px;
             cursor: grab;
             user-select: none;
-            transition: transform 0.1s;
-            z-index: 50;
+            transition: transform 0.15s;
+            margin-top: -35px; /* Yuvanın içinde/üstünde dursun */
         }
+        .bird:active { cursor: grabbing; transform: scale(1.3); }
 
-        .bird:active { cursor: grabbing; transform: scale(1.2); }
-
-        /* ZİYARETÇİ VE AKSİYONLAR */
+        /* ZİYARETÇİ KUŞ */
         #visitor {
             position: absolute;
             top: -100px;
-            width: 100px;
-            height: 100px;
-            background: url('https://i.imgur.com/A6uC2xY.png') no-repeat center;
-            background-size: contain;
-            transition: all 3s ease-in-out;
+            font-size: 65px;
+            transition: all 2.5s ease-in-out;
             z-index: 80;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3));
         }
 
+        /* SATIN ALMA BUTONU */
         #buy-nest-btn {
             bottom: 30px;
             right: 30px;
-            padding: 15px 25px;
+            padding: 18px 28px;
             background: #4caf50;
-            border: 3px solid #2e7d32;
-            border-radius: 10px;
+            border: none;
+            border-radius: 15px;
             color: white;
             font-weight: bold;
+            font-size: 18px;
             cursor: pointer;
+            box-shadow: 0 6px 0 #2e7d32;
             position: absolute;
+            transition: 0.1s;
         }
-
-        #buy-nest-btn:disabled { background: #9e9e9e; border-color: #757575; cursor: not-allowed; }
+        #buy-nest-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2e7d32; }
+        #buy-nest-btn:disabled { background: #9e9e9e; box-shadow: 0 6px 0 #757575; cursor: not-allowed; }
 
     </style>
 </head>
@@ -91,11 +81,11 @@
 
 <div id="game-canvas">
     <div id="gold-ui" class="ui">Altın: <span id="gold">120</span> 💰</div>
-    <div id="timer-ui" class="ui">Ziyaretçi: <span id="timer">04:00</span></div>
+    <div id="timer-ui" class="ui">Ziyaretçi Geliyor: <span id="timer">04:00</span> 🦅</div>
     
-    <div id="visitor"></div>
+    <div id="visitor">🦅</div>
 
-    <div class="branch-container" id="nests-wrapper">
+    <div id="nests-wrapper">
         </div>
 
     <button id="buy-nest-btn">Yeni Yuva Al (100 Altın)</button>
@@ -105,16 +95,17 @@
     let gold = 120;
     let timerSeconds = 240; // 4 Dakika
     let nests = [
-        { id: 0, x: 20, y: 40, birdLevel: 1 }, // Başlangıç yuvası ve kuşu
-        { id: 1, x: 50, y: 30, birdLevel: 0 }, // Boş yuva
-        { id: 2, x: 75, y: 45, birdLevel: 0 }  // Boş yuva
+        { id: 0, x: 25, y: 50, birdLevel: 1 }, // Başlangıç kuşu
+        { id: 1, x: 55, y: 40, birdLevel: 0 },
+        { id: 2, x: 70, y: 60, birdLevel: 0 }
     ];
 
     const birdIcons = {
-        1: "https://i.imgur.com/Q2rR3hS.png", // Muhabbet
-        2: "https://i.imgur.com/K7R6YpZ.png", // Sultan
-        3: "https://i.imgur.com/J3T6G2q.png", // Cennet
-        4: "https://i.imgur.com/o5X7y6j.png"  // Gizemli Kuş (Yumurta simgesiyle aynı level)
+        1: "🐤", // Seviye 1
+        2: "🦜", // Seviye 2
+        3: "🦚", // Seviye 3
+        4: "🦉", // Seviye 4
+        5: "🦢"  // Seviye 5
     };
 
     function init() {
@@ -131,49 +122,45 @@
             nestDiv.className = 'nest';
             nestDiv.style.left = nest.x + '%';
             nestDiv.style.top = nest.y + '%';
-            nestDiv.on换 = (e) => e.preventDefault();
 
             if (nest.birdLevel > 0) {
-                const birdImg = document.createElement('img');
-                birdImg.src = birdIcons[nest.birdLevel];
-                birdImg.className = 'bird';
-                birdImg.draggable = true;
-                birdImg.dataset.index = index;
+                const birdDiv = document.createElement('div');
+                birdDiv.className = 'bird';
+                birdDiv.innerText = birdIcons[nest.birdLevel];
+                birdDiv.draggable = true;
                 
-                // Merge (Birleştirme) Olayları
-                birdImg.ondragstart = (e) => e.dataTransfer.setData("text", index);
+                birdDiv.ondragstart = (e) => e.dataTransfer.setData("text", index);
                 nestDiv.ondragover = (e) => e.preventDefault();
                 nestDiv.ondrop = (e) => {
                     const fromIndex = e.dataTransfer.getData("text");
                     handleMerge(parseInt(fromIndex), index);
                 };
 
-                nestDiv.appendChild(birdImg);
+                nestDiv.appendChild(birdDiv);
             } else {
-                // Boş yuvaya da kuş bırakılabilir
                 nestDiv.ondragover = (e) => e.preventDefault();
                 nestDiv.ondrop = (e) => {
                     const fromIndex = e.dataTransfer.getData("text");
                     moveBird(parseInt(fromIndex), index);
                 };
             }
-
             wrapper.appendChild(nestDiv);
         });
         document.getElementById('gold').innerText = gold;
+        document.getElementById('buy-nest-btn').disabled = (gold < 100);
     }
 
     function handleMerge(fromIdx, toIdx) {
         if (fromIdx === toIdx) return;
         
-        const fromBird = nests[fromIdx];
-        const toBird = nests[toIdx];
+        let fromNest = nests[fromIdx];
+        let toNest = nests[toIdx];
 
-        if (fromBird.birdLevel === toBird.birdLevel && fromBird.birdLevel < 4) {
+        if (fromNest.birdLevel === toNest.birdLevel && fromNest.birdLevel < 5) {
             nests[toIdx].birdLevel += 1;
             nests[fromIdx].birdLevel = 0;
-            gold += 10; // Birleştirme ödülü
-        } else if (toBird.birdLevel === 0) {
+            gold += 25; // Birleştirme ödülü
+        } else if (toNest.birdLevel === 0) {
             moveBird(fromIdx, toIdx);
         }
         drawNests();
@@ -205,21 +192,22 @@
 
     function visitorArrival() {
         const v = document.getElementById('visitor');
-        v.style.left = "45%";
-        v.style.top = "10%";
+        v.style.left = "48%";
+        v.style.top = "120px";
 
         setTimeout(() => {
             gold += 50; // Ziyaretçi hediyesi
             v.style.top = "-100px";
             drawNests();
-        }, 3000);
+        }, 3500);
     }
 
     function buyNest() {
         if (gold >= 100) {
             gold -= 100;
-            const newX = Math.random() * 70 + 10;
-            const newY = Math.random() * 40 + 20;
+            // Yeni yuvayı rastgele ama ekrana sığacak bir yere koy
+            const newX = 15 + Math.random() * 70;
+            const newY = 30 + Math.random() * 40;
             nests.push({ id: nests.length, x: newX, y: newY, birdLevel: 1 });
             drawNests();
         }
