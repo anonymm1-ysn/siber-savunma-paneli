@@ -2,29 +2,29 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Kuş Birleştirme - Beta 0.1.7 (Otomatik PNG)</title>
+    <title>Kuş Birleştirme - Beta 0.1.9 (Kesin Çözüm)</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Arial', sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* CANVA ARKA PLANIN */
+        /* ARKA PLAN */
         #game-canvas {
             width: 100vw;
             height: 100vh;
-            /* Bu dosyanın Downloads klasöründe olması şart */
             background: url('file:///c:/Users/Administrator/Downloads/Adsız tasarım.png') no-repeat center center;
             background-size: cover;
             position: relative;
+            background-color: #e8f5e9; 
         }
 
-        /* UI PANELLERİ */
-        .ui { position: absolute; color: #3e2723; font-weight: bold; padding: 12px; background: rgba(255,255,255,0.7); border-radius: 15px; margin: 15px; z-index: 100; border: 2px solid #5d4037; pointer-events: none; }
-        #gold-ui { top: 0; left: 0; font-size: 26px; color: #b8860b; }
-        #timer-ui { top: 0; right: 0; font-size: 18px; }
+        /* UI TASARIMI */
+        .ui { position: absolute; color: #2e7d32; font-weight: bold; padding: 12px 20px; background: rgba(255,255,255,0.85); border-radius: 20px; margin: 15px; z-index: 100; border: 2px solid #81c784; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #gold-ui { top: 0; left: 0; font-size: 24px; }
+        #timer-ui { top: 0; right: 0; font-size: 16px; }
 
         /* YUVALAR */
         .nest {
-            width: 90px;
-            height: 70px;
+            width: 110px;
+            height: 80px;
             position: absolute;
             background-size: contain;
             background-repeat: no-repeat;
@@ -32,11 +32,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             z-index: 10;
+            transition: transform 0.2s;
         }
 
-        /* KUŞLAR VE ŞEFFAFLIK */
+        /* KUŞLAR (ŞEFFAFLIK GARANTİLİ) */
         .bird {
             width: 70px;
             height: 70px;
@@ -44,47 +44,49 @@
             background-repeat: no-repeat;
             background-position: center;
             cursor: grab;
-            margin-top: -40px;
-            /* Artık multiply komutuna gerek yok çünkü internetten şeffaf PNG'ler bulduk */
+            margin-top: -35px;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
         }
-        .bird:active { cursor: grabbing; transform: scale(1.1); }
+        .bird:active { cursor: grabbing; transform: scale(1.2); }
 
         /* ZİYARETÇİ */
         #visitor {
             position: absolute;
-            top: -100px;
-            width: 90px;
-            height: 90px;
+            top: -150px;
+            width: 100px;
+            height: 100px;
             background-size: contain;
             background-repeat: no-repeat;
-            background-position: center;
-            transition: all 2.5s ease-in-out;
-            z-index: 80;
+            transition: all 3s ease-in-out;
+            z-index: 90;
         }
 
+        /* SATIN ALMA BUTONU */
         #buy-nest-btn {
             bottom: 30px;
             right: 30px;
             padding: 15px 35px;
-            background: #8bc34a;
+            background: #ff9800;
             color: white;
-            border: 3px solid #558b2f;
+            border: none;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             position: absolute;
             z-index: 100;
-            box-shadow: 0 4px 0 #33691e;
+            box-shadow: 0 6px 0 #e65100;
+            transition: 0.1s;
         }
-        #buy-nest-btn:active { transform: translateY(4px); box-shadow: none; }
+        #buy-nest-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #e65100; }
+        #buy-nest-btn:disabled { background: #bdbdbd; box-shadow: none; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <div id="game-canvas">
     <div id="gold-ui" class="ui">Altın: <span id="gold">120</span> 💰</div>
-    <div id="timer-ui" class="ui">Ziyaretçi: <span id="timer">04:00</span> 🦅</div>
+    <div id="timer-ui" class="ui">Hediye Kuş: <span id="timer">04:00</span> 🦅</div>
     
     <div id="visitor"></div>
     <div id="nests-wrapper"></div>
@@ -93,37 +95,33 @@
 </div>
 
 <script>
-    // İNTERNETTEN HAZIR VE ŞEFFAFF PNG LİNKLERİ
-    const URL_AYARLARI = {
-        yuva: "https://i.imgur.com/KxJ6w5N.png", // Basit, şeffaf yuva
-        ziyaretci: "https://i.imgur.com/A6uC2xY.png", // Kartal/Büyük kuş
+    // GÜVENİLİR VE ENGEL OLMAYAN YENİ LİNKLER
+    const ASSETS = {
+        yuva: "https://cdn-icons-png.flaticon.com/512/3523/3523063.png",
+        ziyaretci: "https://cdn-icons-png.flaticon.com/512/25/25661.png",
         kuslar: {
-            1: "https://i.imgur.com/Q2rR3hS.png", // Muhabbet (Yeşil)
-            2: "https://i.imgur.com/K7R6YpZ.png", // Sultan (Gri)
-            3: "https://i.imgur.com/J3T6G2q.png", // Cennet (Kırmızı/Yeşil)
-            4: "https://i.imgur.com/H1t3L1E.png", // Kanarya (Sarı)
-            5: "https://i.imgur.com/F3b5M7s.png", // Tukan
-            6: "https://i.imgur.com/W1X4C1v.png"  // Papağan (Mavi)
+            1: "https://cdn-icons-png.flaticon.com/512/2589/2589050.png", // Yeşil Kuş
+            2: "https://cdn-icons-png.flaticon.com/512/2589/2589139.png", // Sarı Kuş
+            3: "https://cdn-icons-png.flaticon.com/512/2589/2589110.png", // Mavi Kuş
+            4: "https://cdn-icons-png.flaticon.com/512/2589/2589114.png", // Kırmızı Kuş
+            5: "https://cdn-icons-png.flaticon.com/512/2589/2589121.png", // Tukan
+            6: "https://cdn-icons-png.flaticon.com/512/2589/2589101.png"  // Büyük Papağan
         }
     };
 
-    // Canva tasarımındaki dallarına göre koordinatlar
-    const dalKoordinatlari = [
-        { x: 42, y: 46 }, // Alt dal
-        { x: 36, y: 34 }, // Sol dal
-        { x: 55, y: 38 }, // Sağ dal
-        { x: 61, y: 26 }, // Üst sağ dal
-        { x: 44, y: 22 }, // En üst dal
-        { x: 50, y: 55 }  // Alt orta
+    // Senin Canva'daki ağaç dallarına tam oturan koordinatlar
+    const dallar = [
+        { x: 41, y: 45 }, { x: 35, y: 32 }, { x: 56, y: 36 }, 
+        { x: 62, y: 25 }, { x: 44, y: 20 }, { x: 50, y: 55 }
     ];
 
     let gold = 120;
     let timerSeconds = 240;
-    let aktifYuvalar = [{ index: 0, birdLevel: 1 }, { index: 1, birdLevel: 0 }];
+    let aktifYuvalar = [{ dIndex: 0, level: 1 }, { dIndex: 1, level: 0 }];
 
     function init() {
         render();
-        // Saniyede 1 Altın
+        // Saniyede 1 Altın ve Sistem Döngüsü
         setInterval(() => {
             gold += 1;
             document.getElementById('gold').innerText = gold;
@@ -137,55 +135,50 @@
     function render() {
         const wrapper = document.getElementById('nests-wrapper');
         wrapper.innerHTML = '';
+        
         aktifYuvalar.forEach((yuva, arrIdx) => {
-            const koord = dalKoordinatlari[yuva.index];
-            const nestDiv = document.createElement('div');
-            nestDiv.className = 'nest';
-            nestDiv.style.left = koord.x + '%';
-            nestDiv.style.top = koord.y + '%';
-            // İnternet yuva linki
-            nestDiv.style.backgroundImage = `url('${URL_AYARLARI.yuva}')`;
+            const pos = dallar[yuva.dIndex];
+            const nDiv = document.createElement('div');
+            nDiv.className = 'nest';
+            nDiv.style.left = pos.x + '%';
+            nDiv.style.top = pos.y + '%';
+            nDiv.style.backgroundImage = `url('${ASSETS.yuva}')`;
 
-            if (yuva.birdLevel > 0) {
-                const birdDiv = document.createElement('div');
-                birdDiv.className = 'bird';
-                // İnternet kuş linki
-                birdDiv.style.backgroundImage = `url('${URL_AYARLARI.kuslar[yuva.birdLevel]}')`;
-                birdDiv.draggable = true;
-                birdDiv.ondragstart = (e) => e.dataTransfer.setData("text", arrIdx);
-                nestDiv.ondragover = (e) => e.preventDefault();
-                nestDiv.ondrop = (e) => {
-                    const fromIdx = e.dataTransfer.getData("text");
-                    handleMerge(parseInt(fromIdx), arrIdx);
-                };
-                nestDiv.appendChild(birdDiv);
+            if (yuva.level > 0) {
+                const bDiv = document.createElement('div');
+                bDiv.className = 'bird';
+                bDiv.style.backgroundImage = `url('${ASSETS.kuslar[yuva.level]}')`;
+                bDiv.draggable = true;
+                bDiv.ondragstart = (e) => e.dataTransfer.setData("text", arrIdx);
+                nDiv.ondragover = (e) => e.preventDefault();
+                nDiv.ondrop = (e) => merge(parseInt(e.dataTransfer.getData("text")), arrIdx);
+                nDiv.appendChild(bDiv);
             } else {
-                nestDiv.ondragover = (e) => e.preventDefault();
-                nestDiv.ondrop = (e) => {
-                    const fromIdx = e.dataTransfer.getData("text");
-                    moveBird(parseInt(fromIdx), arrIdx);
-                };
+                nDiv.ondragover = (e) => e.preventDefault();
+                nDiv.ondrop = (e) => move(parseInt(e.dataTransfer.getData("text")), arrIdx);
             }
-            wrapper.appendChild(nestDiv);
+            wrapper.appendChild(nDiv);
         });
+        
+        const btn = document.getElementById('buy-nest-btn');
+        btn.disabled = (gold < 100 || aktifYuvalar.length >= dallar.length);
     }
 
-    function handleMerge(from, to) {
+    function merge(from, to) {
         if (from === to) return;
-        if (aktifYuvalar[from].birdLevel === aktifYuvalar[to].birdLevel && aktifYuvalar[from].birdLevel < 6) {
-            aktifYuvalar[to].birdLevel++;
-            aktifYuvalar[from].birdLevel = 0;
-            gold += 50;
-        } else if (aktifYuvalar[to].birdLevel === 0) {
-            aktifYuvalar[to].birdLevel = aktifYuvalar[from].birdLevel;
-            aktifYuvalar[from].birdLevel = 0;
+        if (aktifYuvalar[from].level === aktifYuvalar[to].level && aktifYuvalar[from].level < 6) {
+            aktifYuvalar[to].level++;
+            aktifYuvalar[from].level = 0;
+            gold += 40;
+        } else if (aktifYuvalar[to].level === 0) {
+            move(from, to);
         }
         render();
     }
 
-    function moveBird(from, to) {
-        aktifYuvalar[to].birdLevel = aktifYuvalar[from].birdLevel;
-        aktifYuvalar[from].birdLevel = 0;
+    function move(from, to) {
+        aktifYuvalar[to].level = aktifYuvalar[from].level;
+        aktifYuvalar[from].level = 0;
         render();
     }
 
@@ -197,16 +190,19 @@
 
     function visitorArrival() {
         const v = document.getElementById('visitor');
-        // İnternet ziyaretçi linki
-        v.style.backgroundImage = `url('${URL_AYARLARI.ziyaretci}')`;
-        v.style.left = "50%"; v.style.top = "100px";
-        setTimeout(() => { gold += 150; v.style.top = "-100px"; }, 3000);
+        v.style.backgroundImage = `url('${ASSETS.ziyaretci}')`;
+        v.style.left = "48%"; v.style.top = "80px";
+        setTimeout(() => { 
+            gold += 200; 
+            v.style.top = "-150px"; 
+            document.getElementById('gold').innerText = gold;
+        }, 3000);
     }
 
     function buyNest() {
-        if (gold >= 100 && aktifYuvalar.length < dalKoordinatlari.length) {
+        if (gold >= 100 && aktifYuvalar.length < dallar.length) {
             gold -= 100;
-            aktifYuvalar.push({ index: aktifYuvalar.length, birdLevel: 1 });
+            aktifYuvalar.push({ dIndex: aktifYuvalar.length, level: 1 });
             render();
         }
     }
