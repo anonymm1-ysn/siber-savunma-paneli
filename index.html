@@ -1,187 +1,99 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>LAST SANDWICH - Alpha</title>
+    <title>Pixel Adventure</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; }
-        canvas { display: block; background: linear-gradient(#20002c, #cbb4d4); }
+        body { margin: 0; overflow: hidden; background: #0099ff; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
+
+<audio id="gameMusic" loop>
+    <source src="bensound-dance.mp3" type="audio/mpeg">
+</audio>
+
 <canvas id="gameCanvas"></canvas>
 
 <script>
-    const playerImg = new Image();
-playerImg.src = 'c:\Users\Administrator\Downloads\pixil-frame-0.png';
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const music = document.getElementById('gameMusic');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// --- GÖRSEL EKLEME HAZIRLIĞI (İsteğe Bağlı) ---
-// Karakter resmini tasarladığında bu satırları kullanabilirsin:
-// const playerSprite = new Image();
-// playerSprite.src = 'karakter.png'; // Resim dosyasının adını buraya yaz
+// --- GÖRSELLERİ YÜKLEME ---
+const background = new Image();
+background.src = 'New Piskel (2).png'; // Paylaştığın arka plan
 
-// Oyun Değişkenleri
-const gravity = 0.8;
-const wallSlideSpeed = 2; // Duvara tutunurken düşme hızı
-const keys = { w: false, a: false, s: false, d: false };
+const playerImg = new Image();
+// Egemen karakteri atınca buradaki 'karakter.png' kısmını onun dosya adıyla değiştir
+playerImg.src = 'bear.png'; 
 
-// Karakter Nesnesi
-const player = {
+// --- DEĞİŞKENLER ---
+let cameraX = 0;
+let player = {
     x: 100,
-    y: canvas.height - 100,
-    width: 40,
-    height: 40,
-    color: '#ffcc00', 
-    dx: 0,
-    dy: 0,
-    jumpForce: -15,
-    speed: 5,
-    grounded: false,
-    onWall: false, // Duvara değiyor mu?
-    wallDir: 0 // Değdiği duvarın yönü (-1 sol, 1 sağ)
+    y: 0, // Kod içinde çimenlerin üzerine ayarlanacak
+    width: 64,
+    height: 64,
+    speed: 5
 };
 
-// Dağın Platformları (Mistik Dağ)
-const platforms = [
-    { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }, // Zemin
-    { x: 200, y: canvas.height - 150, width: 150, height: 20 },
-    { x: 450, y: canvas.height - 300, width: 150, height: 20 },
-    // DUVARLAR (Tırmanmak için)
-    { x: 100, y: canvas.height - 400, width: 20, height: 300 }, // Sol duvar
-    { x: 600, y: canvas.height - 550, width: 20, height: 300 }, // Sağ duvar
-    
-    { x: 500, y: canvas.height - 600, width: 200, height: 20 } // Zirveye yakın
-];
+let keys = {};
 
-// Tuş Kontrolleri
-window.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
-window.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+// Müzik başlatma (Tarayıcılar kullanıcı tıklamadan ses çalmaz)
+window.addEventListener('keydown', () => {
+    music.play().catch(e => console.log("Müzik henüz hazır değil"));
+}, { once: true });
+
+window.addEventListener('keydown', e => keys[e.code] = true);
+window.addEventListener('keyup', e => keys[e.code] = false);
 
 function update() {
-    // --- Yatay Hareket ---
-    if (keys.d) player.dx = player.speed;
-    else if (keys.a) player.dx = -player.speed;
-    else player.dx = 0;
-
-    // --- Yerçekimi ve Duvar Kayması ---
-    if (player.onWall && player.dy > 0) {
-        player.dy = wallSlideSpeed; // Yavaşça kay
-    } else {
-        player.dy += gravity;
+    // Yürüme mantığı
+    if (keys['KeyD'] || keys['ArrowRight']) {
+        player.x += player.speed;
+        cameraX += player.speed; // Kamera karakterle gider
+    }
+    if (keys['KeyA'] || keys['ArrowLeft']) {
+        player.x -= player.speed;
+        cameraX -= player.speed;
     }
 
-    player.x += player.dx;
-    player.y += player.dy;
-
-    // --- Çarpışma ve Duvar Algılama ---
-    player.grounded = false;
-    player.onWall = false;
-    player.wallDir = 0;
-
-    platforms.forEach(plat => {
-        // Genel çarpışma kontrolü
-        if (player.x < plat.x + plat.width &&
-            player.x + player.width > plat.x &&
-            player.y < plat.y + plat.height &&
-            player.y + player.height > plat.y) {
-            
-            // --- Üstten Çarpma (Zemine basma) ---
-            if (player.dy > 0 && player.y + player.height - player.dy <= plat.y) {
-                player.dy = 0;
-                player.y = plat.y - player.height;
-                player.grounded = true;
-            }
-            
-            // --- Yanlardan Çarpma (Duvara değme) ---
-            // Sağ duvara değme (karakterin sağ tarafı platformun soluna)
-            else if (player.dx > 0 && player.x + player.width - player.dx <= plat.x && player.height + player.y > plat.y + 5) {
-                 player.dx = 0;
-                 player.x = plat.x - player.width;
-                 if (!player.grounded) {
-                    player.onWall = true;
-                    player.wallDir = 1;
-                 }
-            }
-            // Sol duvara değme (karakterin sol tarafı platformun sağına)
-            else if (player.dx < 0 && player.x - player.dx >= plat.x + plat.width && player.height + player.y > plat.y + 5) {
-                 player.dx = 0;
-                 player.x = plat.x + plat.width;
-                 if (!player.grounded) {
-                    player.onWall = true;
-                    player.wallDir = -1;
-                 }
-            }
-
-            // --- Alttan Çarpma (Kafayı vurma) ---
-            else if (player.dy < 0 && player.y - player.dy >= plat.y + plat.height) {
-                player.dy = 0;
-                player.y = plat.y + plat.height;
-            }
-        }
-    });
-
-    // --- Zıplama Kontrolleri ---
-    if (keys.w) {
-        // Normal Zıplama (Zemindeyken)
-        if (player.grounded) {
-            player.dy = player.jumpForce;
-            player.grounded = false;
-        }
-        // Duvardan Zıplama (Duvardayken ve havadayken)
-        else if (player.onWall) {
-            player.dy = player.jumpForce; // Yukarı zıpla
-            player.dx = -player.wallDir * player.speed * 2; // Duvardan itilerek zıpla
-            
-            // Zıpladıktan hemen sonra tekrar duvara yapışmaması için küçük bir itiş.
-            player.x += player.dx;
-            player.onWall = false;
-        }
-        // Tuşu basılı tutmayı engellemek için (tek vuruşta bir zıplama)
-        keys.w = false; 
-    }
-
-    // Ekran Sınırları
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+    // Karakterin duracağı zemin yüksekliği (Çimenlerin üstü)
+    // Çizimindeki kahverengi toprağın hemen üstü
+    player.y = canvas.height - 210; 
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Platformları ve Duvarları Çiz
-    ctx.fillStyle = '#4b3621'; 
-    platforms.forEach(plat => {
-        ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
-    });
+    // 1. ARKA PLAN (DAĞLAR VE BULUTLAR) - Çok yavaş kayar
+    let bgScroll = (cameraX * 0.2) % canvas.width;
+    ctx.drawImage(background, -bgScroll, 0, canvas.width, canvas.height);
+    ctx.drawImage(background, canvas.width - bgScroll, 0, canvas.width, canvas.height);
 
-    // Karakteri Çiz (Sarı Kare)
-    // --- GÖRSEL EKLEDİĞİNDE BURAYI DEĞİŞTİR ---
-    // if (playerSprite.complete) { // Resim yüklendiyse çiz
-    //     ctx.drawImage(playerSprite, player.x, player.y, player.width, player.height);
-    // } else {
-        ctx.fillStyle = player.color; // Resim yoksa kare çiz
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-    // }
-    // ------------------------------------------
+    // 2. AĞAÇLAR (KATMAN) - Biraz daha hızlı kayar (Parallax etkisi)
+    // Not: Çiziminde ağaçlar arka planla birleşik. 
+    // Eğer ağaçları ayrı png yaparsan buraya (cameraX * 0.5) hızıyla ekleyebilirsin.
 
-    // Hedef: SON SANDVİÇ (Temsili)
-    ctx.fillStyle = '#ff4500';
-    ctx.fillRect(600, canvas.height - 640, 30, 20); 
-    ctx.fillStyle = '#fff';
-    ctx.fillText("SON SANDVİÇ", 580, canvas.height - 650);
+    // 3. KARAKTER (EGEMEN'İN ATACAĞI PNG)
+    ctx.drawImage(playerImg, player.x - cameraX + 100, player.y, player.width, player.height);
 
-    requestAnimationFrame(() => {
-        update();
-        draw();
-    });
+    requestAnimationFrame(gameLoop);
 }
 
-draw();
+function gameLoop() {
+    update();
+    draw();
+}
+
+// Görsel yüklendiğinde başlat
+background.onload = () => {
+    gameLoop();
+};
 </script>
 </body>
 </html>
