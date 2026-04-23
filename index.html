@@ -68,21 +68,29 @@ function update() {
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 1. ARKA PLAN (DAĞLAR VE BULUTLAR) - Çok yavaş kayar
-    let bgScroll = (cameraX * 0.2) % canvas.width;
-    ctx.drawImage(background, -bgScroll, 0, canvas.width, canvas.height);
-    ctx.drawImage(background, canvas.width - bgScroll, 0, canvas.width, canvas.height);
+    // Arka planı çizmeye çalış
+    try {
+        let bgScroll = (cameraX * 0.2) % canvas.width;
+        ctx.drawImage(background, -bgScroll, 0, canvas.width, canvas.height);
+        ctx.drawImage(background, canvas.width - bgScroll, 0, canvas.width, canvas.height);
+    } catch (e) {
+        // Eğer görsel yüklenmezse hata vermemesi için burayı boş bırakıyoruz
+    }
 
-    // 2. AĞAÇLAR (KATMAN) - Biraz daha hızlı kayar (Parallax etkisi)
-    // Not: Çiziminde ağaçlar arka planla birleşik. 
-    // Eğer ağaçları ayrı png yaparsan buraya (cameraX * 0.5) hızıyla ekleyebilirsin.
+    // Zemin Testi (Görsel yoksa nerede yürüdüğünü görebilmen için)
+    ctx.fillStyle = "#4a2b10"; // Toprak rengi
+    ctx.fillRect(0, canvas.height - 150, canvas.width, 150);
 
-    // 3. KARAKTER (EGEMEN'İN ATACAĞI PNG)
-    ctx.drawImage(playerImg, player.x - cameraX + 100, player.y, player.width, player.height);
+    // Karakter (Egemen karakteri atana kadar geçici bir kare)
+    if (playerImg.complete && playerImg.src.includes('.png')) {
+        ctx.drawImage(playerImg, player.x - cameraX + 100, player.y, player.width, player.height);
+    } else {
+        ctx.fillStyle = "red"; // Karakter yerine kırmızı kare
+        ctx.fillRect(player.x - cameraX + 100, player.y, player.width, player.height);
+    }
 
-    requestAnimationFrame(gameLoop);
 }
 
 function gameLoop() {
