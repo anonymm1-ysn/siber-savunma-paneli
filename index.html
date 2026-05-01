@@ -1,167 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Pixel bear  Adventure</title>
+    <meta charset="UTF-8">
+    <title>Benim Oyunum</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #0099ff; color: white; font-family: sans-serif;}
-        canvas { display: block; }
-        #debugInfo {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 5px;
-            pointer-events: none;
+        /* CSS OLMADAN RESİMLER DÜZGÜN DURMAZ, BU KISIM ŞART */
+        body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; }
+
+        /* ARKA PLAN AYARI */
+        #game-world {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('arkaplan.jpg'); /* ARKA PLAN BURAYA */
+            background-size: cover;
+            background-position: bottom;
+            position: relative;
         }
+
+        /* KARAKTER AYARI */
+        #character {
+            width: 100px; /* Karakterin genişliği */
+            height: 100px; /* Karakterin boyu */
+            background-image: url('karakter1.png'); /* KARAKTER BURAYA */
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            bottom: 50px; /* Çimene basma seviyesi */
+            left: 50%;
+            transform: translateX(-50%);
+            transition: bottom 0.3s ease, transform 0.1s ease;
+        }
+
+        /* ENVANTER (MINECRAFT STİLİ) */
+        #inventory-ui {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #c6c6c6; border: 4px solid #373737; padding: 10px;
+            display: none; z-index: 100;
+        }
+        .slot-grid { display: grid; grid-template-columns: repeat(9, 40px); gap: 5px; }
+        .slot { width: 40px; height: 40px; background: #8b8b8b; border: 2px solid #373737; }
     </style>
 </head>
 <body>
 
-<audio id="gameMusic" loop>
-    <source src="bensound-dance.mp3" type="audio/mpeg">
-    <source src="beepbeepsound.mp3" type="audio/mpeg">
-</audio>
+    <div id="game-world">
+        <div id="character"></div>
+        <div id="inventory-ui">
+            <div class="slot-grid" id="slot-container"></div>
+        </div>
+    </div>
 
-<div id="debugInfo">
-    Oyun Yükleniyor...<br>
-    Müzik: Bekleniyor (Tuşa bas)<br>
-    Arka Plan: Bekleniyor...
-</div>
+    <!-- SESLER -->
+    <audio id="beep" src="beepbeepsound.mp3"></audio>
+    <audio id="music" src="assumptions.mp3"></audio>
 
-<canvas id="gameCanvas"></canvas>
+    <script>
+        const char = document.getElementById('character');
+        const inv = document.getElementById('inventory-ui');
+        const beep = document.getElementById('beep');
+        const music = document.getElementById('music');
+        const slots = document.getElementById('slot-container');
 
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const music = document.getElementById('gameMusic');
-const debugEl = document.getElementById('debugInfo');
+        // 27 Tane slot oluştur
+        for(let i=0; i<27; i++) {
+            let s = document.createElement('div');
+            s.className = 'slot';
+            slots.appendChild(s);
+        }
 
-// Tam ekran yapma
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+        let isJumping = false;
 
-// --- GÖRSELLERİ YÜKLEME ---
-const background = new Image();
-background.src = 'New Piskel (2).png'; // Seninkinin adı tam olarak bu olmalı
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
 
-// Egemen'in PNG'sini yükle (Geçici)
-const playerImg = new Image();
-// Egemen karakteri atınca buradaki 'karakter.png' kısmını onun dosya adıyla değiştir
-playerImg.src = 'bear.png'; 
+            // YÖNLER (A ve D)
+            if (key === 'a') char.style.transform = 'translateX(-50%) scaleX(-1)';
+            if (key === 'd') char.style.transform = 'translateX(-50%) scaleX(1)';
 
-// Hata ayıklama takibi
-let isBackgroundLoaded = false;
-let isPlayerLoaded = false;
+            // ENVANTER (E)
+            if (key === 'e') {
+                if (inv.style.display === 'block') {
+                    inv.style.display = 'none';
+                } else {
+                    inv.style.display = 'block';
+                    beep.currentTime = 0;
+                    beep.play();
+                }
+            }
 
-background.onload = () => { 
-    isBackgroundLoaded = true; 
-    console.log("Arka plan yüklendi.");
-};
-background.onerror = () => {
-    console.error("Arka plan yüklenemedi: 'New Piskel (2).png' bulunamadı.");
-    alert("'New Piskel (2).png' dosyası kodla aynı klasörde değil.");
-};
+            // ZIPLAMA (Space)
+            if (e.code === 'Space' && !isJumping) {
+                isJumping = true;
+                music.currentTime = 0;
+                music.play();
 
-playerImg.onload = () => { isPlayerLoaded = true; };
-// playerImg için onerror eklemedim, çünkü şimdilik geçici bir kare çizeceğiz.
-
-// --- OYUN DEĞİŞKENLERİ ---
-let cameraX = 0;
-let player = {
-    x: canvas.width / 4, // Başlangıç pozisyonu
-    y: 0, // Kod içinde toprağın üzerine ayarlanacak
-    width: 64, // Piksel çizimine göre ayarla
-    height: 64,
-    speed: 5
-};
-
-let keys = {};
-
-// Müzik Başlatma
-window.addEventListener('keydown', (e) => {
-    if (music.paused) {
-        music.play().then(() => {
-            debugEl.innerHTML = debugEl.innerHTML.replace("Müzik: Bekleniyor (Tuşa bas)", "Müzik: Çalıyor");
-        }).catch(err => {
-            console.error("Müzik çalma hatası:", err);
-            debugEl.innerHTML = debugEl.innerHTML.replace("Müzik: Bekleniyor (Tuşa bas)", "Müzik: Hata! (Dosyayı kontrol et)");
+                char.style.bottom = '200px'; // Zıpla
+                setTimeout(() => {
+                    char.style.bottom = '50px'; // Düş
+                    setTimeout(() => { isJumping = false; }, 300);
+                }, 300);
+            }
         });
-    }
-}, { once: true }); // Sadece bir kez çalışır
-
-// Klavye Kontrolleri
-window.addEventListener('keydown', e => keys[e.code] = true);
-window.addEventListener('keyup', e => keys[e.code] = false);
-
-function update() {
-    if (keys['KeyD'] || keys['ArrowRight']) {
-        cameraX += player.speed;
-    }
-    if (keys['KeyA'] || keys['ArrowLeft']) {
-        cameraX -= player.speed;
-    }
-
-    // Karakterin duracağı zemin yüksekliği (Toprağın hemen üstü)
-    // Paylaştığın resimde toprak aşağıda. canvas.height - 200 gibi bir değer deneyelim.
-    player.y = canvas.height - player.height - 180; 
-
-    // Hata ayıklama bilgisini güncelle
-    let bgStatus = isBackgroundLoaded ? "Yüklendi" : "Bekleniyor/Bulunamadı";
-    debugEl.innerHTML = `Kamera X: ${Math.round(cameraX)}<br>Müzik: ${music.paused ? "Durdu" : "Çalıyor"}<br>Arka Plan: ${bgStatus}`;
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // 1. ARKA PLAN VE ÇİMENLER (Paylaştığın görsel) - Parallax Etkisi
-    if (isBackgroundLoaded) {
-        // Arka planı çiz
-        let bgScroll = (cameraX * 0.3) % canvas.width;
-        
-        // Sonsuz döngü için iki kez çiz
-        ctx.drawImage(background, -bgScroll, 0, canvas.width, canvas.height);
-        ctx.drawImage(background, canvas.width - bgScroll, 0, canvas.width, canvas.height);
-        
-    } else {
-        // Eğer görsel yoksa, en azından bir gökyüzü ve toprak çiz ki sistemi gör
-        // Gökyüzü (senin mavi)
-        ctx.fillStyle = "#0099ff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Toprak (senin kahverengi)
-        ctx.fillStyle = "#4a2b10";
-        ctx.fillRect(0, canvas.height - 180, canvas.width, 180);
-    }
-
-    // 2. AĞAÇLAR (Çizimde arka planla birleşik, bu yüzden ayırmıyoruz)
-    // NOT: Eğer ağaçları ayırıp farklı parallax hızı istiyorsan onları ayrı PNG yapıp cameraX * 0.6 hızıyla buraya eklemelisin.
-
-    // 3. KARAKTER (EGEMEN'İN ATACAĞI PNG)
-    let playerDrawX = player.x; // Ekrandaki sabit yeri
-
-    if (isPlayerLoaded) {
-        ctx.drawImage(playerImg, playerDrawX, player.y, player.width, player.height);
-    } else {
-        // Egemen gelene kadar geçici kırmızı karakter
-        ctx.fillStyle = "red";
-        ctx.fillRect(playerDrawX, player.y, player.width, player.height);
-    }
-}
-
-function gameLoop() {
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
-}
-
-// Görselleri ve sistemi başlat
-gameLoop();
-
-</script>
+    </script>
 </body>
 </html>
